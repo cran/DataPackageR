@@ -1,0 +1,37 @@
+---
+title: "extra"
+author: "Greg Finak"
+date: "5/30/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This file is processed second in the `config.yml` file. It therefore has access to the data objects
+created by `subsetCars.Rmd`, the file that is processed first in the `config.yml`.
+
+## Reading objects from previously run files
+
+In order to read previously processed objects, we use the `datapackager_object_read()` API from `DataPackageR`:
+
+
+```{r reading_from_environments}
+library(DataPackageR)
+cars_over_20 = datapackager_object_read("cars_over_20")
+print(cars_over_20)
+```
+
+This API reads from an environment named `ENVS`, containing `subsetCars` and any other previously built data set objects. It is passed into the render environment of `extra.rmd` by DataPackageR at the `render()` call. 
+
+## Additional data objects
+
+This file will add the pressure data set to the example.
+
+```{r}
+data(pressure)
+pressure <- pressure # need to do an assignment
+plot(pressure)
+```
+
