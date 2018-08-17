@@ -8,7 +8,7 @@ Authors@R:
       comment = "Kara reviewed the package for ropensci, see <https://github.com/ropensci/onboarding/issues/230>"),
       person("William", "Landau", role = "rev",
       comment = "William reviewed the package for ropensci, see <https://github.com/ropensci/onboarding/issues/230>"))
-Version: 0.15.1
+Version: 0.15.2
 Description: A framework to help construct R data packages in a 
   reproducible manner. Potentially time consuming processing of 
   raw data sets into analysis ready data sets is done in a reproducible 
@@ -29,11 +29,13 @@ Imports: digest, knitr, utils, rmarkdown, desc, yaml, purrr, roxygen2
 VignetteBuilder: knitr
 RoxygenNote: 6.1.0
 Encoding: UTF-8
-Suggests: testthat, covr, data.tree
+Suggests: spelling, testthat, covr, data.tree
 URL: https://github.com/ropensci/DataPackageR
 BugReports: https://github.com/ropensci/DataPackageR/issues
+SystemRequirements: pandoc (>= 1.12.3) - http://pandoc.org
+Language: en-US
 NeedsCompilation: no
-Packaged: 2018-08-15 19:57:27 UTC; gfinak
+Packaged: 2018-08-17 19:50:27 UTC; gfinak
 Author: Greg Finak [aut, cre, cph],
   Paul Obrecht [ctb],
   Kara Woo [rev] (Kara reviewed the package for ropensci, see
@@ -42,4 +44,4 @@ Author: Greg Finak [aut, cre, cph],
     <https://github.com/ropensci/onboarding/issues/230>)
 Maintainer: Greg Finak <gfinak@fredhutch.org>
 Repository: CRAN
-Date/Publication: 2018-08-16 12:00:08 UTC
+Date/Publication: 2018-08-17 22:00:05 UTC
