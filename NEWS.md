@@ -1,5 +1,10 @@
+# DataPackageR 0.15.3
+* conditional tests when pandoc is missing (ropensci/DataPackager/issues/46)
+* add use_data_object and use_processing_script (ropensci/DataPackager/issues/44)
+* allow datapacakge_skeleton to be called without files or data objects for interactive construction. (ropensci/DataPackager/issues/44)
+
 # DataPackageR 0.15.2
-* Add  pandoc to SystemRequirements
+* Add  pandoc to SystemRequirements (ropensci/DataPackager/issues/46)
 * Add use_raw_dataset() method (and tests) to add data sets to inst/extdata. interactively. (ropensci/DataPackager/issues/44)
 
 # DataPackageR 0.15.1.9000
