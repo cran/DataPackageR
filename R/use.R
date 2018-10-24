@@ -4,7 +4,8 @@
 #' the inst/extdata directory.
 #'
 #' @param path \code{character} path to file or directory.
-#'
+#' @param ignore \code{logical} whether to ignore the path or file in git and R build. 
+#' 
 #' @return invisibly returns TRUE for success. Stops on failure.
 #' @importFrom usethis proj_get proj_set create_package use_data_raw
 #' @importFrom utils file_test
@@ -25,7 +26,7 @@
 #'   r_object_names = "data")
 #' use_raw_dataset(raw_data)
 #' }
-use_raw_dataset <- function(path = NULL) {
+use_raw_dataset <- function(path = NULL, ignore = FALSE) {
   if (is.null(path)) {
     stop("You must provide a full path to a file or directory.")
   }
@@ -40,6 +41,11 @@ use_raw_dataset <- function(path = NULL) {
       to = file.path(proj_path, "inst", "extdata"),
       overwrite = TRUE
     )
+    if (ignore) {
+      # inst/extdata is a path relative to the project root 
+      # as needed by git_ignore
+      use_ignore(basename(raw_file), path = file.path("inst", "extdata"))
+    }
     return(invisible(TRUE))
   } else if (utils::file_test("-d", raw_file)) {
     file.copy(
@@ -47,6 +53,10 @@ use_raw_dataset <- function(path = NULL) {
       to = file.path(proj_path, "inst", "extdata"),
       recursive = TRUE, overwrite = TRUE
     )
+    if (ignore) {
+      #should work and the directory should be ignored
+      use_ignore(basename(raw_file), path = file.path("inst", "extdata"))
+    }
     return(invisible(TRUE))
   } else {
     stop("path must be a path to an existing file or directory.")
@@ -58,10 +68,12 @@ use_raw_dataset <- function(path = NULL) {
 #'
 #' The Rmd or R file or directory specified by \code{file} will be moved into
 #' the data-raw directory. It will also be added to the yml configuration file.
+#' Any existing file by that name will be overwritten when overwrite is set to TRUE 
 #'
 #' @param file \code{character} path to an existing file or name of a new R or Rmd file to create.
 #' @param title \code{character} title of the processing script for the yaml header. Used only if file is being created.
 #' @param author \code{character} author name for the yaml header. Used only if the file is being created.
+#' @param overwrite \code{logical} default FALSE. Overwrite existing file of the same name.
 #'
 #' @return invisibly returns TRUE for success. Stops on failure.
 #' @importFrom usethis proj_get proj_set create_package use_data_raw
@@ -83,7 +95,7 @@ use_raw_dataset <- function(path = NULL) {
 #'     title = "Processing a new dataset",
 #'     author = "Y.N. Here.")
 #' }
-use_processing_script <- function(file = NULL, title = NULL, author = NULL) {
+use_processing_script <- function(file = NULL, title = NULL, author = NULL, overwrite = FALSE) {
   if (is.null(file)) {
     stop("You must provide a full path to a file.")
   }
@@ -91,7 +103,16 @@ use_processing_script <- function(file = NULL, title = NULL, author = NULL) {
   if (!utils::file_test("-d", file.path(proj_path, "data-raw"))) {
     stop(paste0("data-raw doesn't exist in ", proj_path), call. = FALSE)
   }
+  #check if the given file or directory already exists
+  if (utils::file_test("-f",file.path(proj_path,"data-raw",file))|utils::file_test("-d",file.path(proj_path,"data-raw",file))) { #nolint
+    if (overwrite) {
+      .bullet(paste0("Courtesy warning: ", basename(file), " exists in ",crayon::blue("'data-raw'"),", and ",crayon::red("WILL")," be overwritten."),bullet = crayon::red("\u2622")) #nolint
+    } else {
+      .bullet(paste0("Courtesy warning: ", basename(file), " exists in ",crayon::blue("'data-raw'"),", and ",crayon::red("WILL NOT")," be overwritten."),bullet = crayon::red("\u2622")) #nolint
+    }
+  }
   raw_file <- suppressWarnings(normalizePath(file))
+  
   if (utils::file_test("-f", raw_file)) {
     # test if it's an R or Rmd file.
     if (!(grepl("\\.rmd$", tolower(raw_file)) |
@@ -101,7 +122,7 @@ use_processing_script <- function(file = NULL, title = NULL, author = NULL) {
     file.copy(
       from = raw_file,
       to = file.path(proj_path, "data-raw"),
-      overwrite = TRUE
+      overwrite = overwrite
     )
     # add it to the yaml
     yml <- yml_find(path = proj_path)
@@ -116,8 +137,18 @@ use_processing_script <- function(file = NULL, title = NULL, author = NULL) {
     (grepl("\\.r$", tolower(raw_file)) |
       grepl("\\.rmd$", tolower(raw_file)))) {
     # we have a valid file name and should create it.
-    file.create(file.path(proj_path, "data-raw", basename(raw_file)))
-    .update_header(file.path(proj_path, "data-raw", basename(raw_file)), title = title, author = author)
+    if (utils::file_test("-f", normalizePath(file.path(proj_path, "data-raw", basename(raw_file)), winslash = "/")) &&
+        !overwrite) {
+      .bullet(paste0("Skipping file creation: pass overwrite = TRUE to use_processing_script()"), bullet = crayon::red("\u2622")) #nolint
+    } else {
+      cat("Attempting to create ", raw_file)
+      file.create(file.path(proj_path, "data-raw", basename(raw_file)))
+      .update_header(file.path(proj_path,
+                               "data-raw",
+                               basename(raw_file)),
+                     title = title,
+                     author = author)
+    }
     # add it to the yaml.
     yml <- yml_find(path = proj_path)
     yml <- yml_add_files(yml, basename(raw_file))
@@ -177,7 +208,8 @@ use_data_object <- function(object_name = NULL) {
     partitioned_file <- .partition_rmd_front_matter(file_contents)
   }
   if (!is.null(partitioned_file$front_matter)) {
-    front_matter <- .parse_yaml_front_matter(gsub("#'\\s*", "", partitioned_file$front_matter))
+    front_matter <- .parse_yaml_front_matter(
+      gsub("#'\\s*", "", partitioned_file$front_matter))
   } else {
     front_matter <- list()
   }
@@ -206,9 +238,11 @@ use_data_object <- function(object_name = NULL) {
     # open the file for writing.
     connection <- file(file, open = "w+")
     # write the header
-    writeLines(ifelse(grepl("\\.r$", tolower(file)), "#' ---", "---"), con = connection)
+    writeLines(ifelse(grepl("\\.r$", tolower(file)),
+                      "#' ---", "---"), con = connection)
     writeLines(front_matter, con = connection, sep = "")
-    writeLines(ifelse(grepl("\\.r$", tolower(file)), "#' ---", "---"), con = connection)
+    writeLines(ifelse(grepl("\\.r$", tolower(file)),
+                      "#' ---", "---"), con = connection)
     # write the body
     if (!is.null(partitioned_file$body)) {
       writeLines(partitioned_file$body, con = connection)
@@ -319,7 +353,7 @@ use_data_object <- function(object_name = NULL) {
     yaml::yaml.load(string, ...)
   }
   else {
-    .mark_utf8(yaml::yaml.load(enc2utf8(string), ...))
+    .mark_utf8(yaml::yaml.load(enc2utf8(string), ...)) #nocov
   }
 }
 

@@ -36,6 +36,7 @@ test_that("use_raw_data works as expected", {
   recursive = TRUE
   )
   expect_true(use_raw_dataset(myfile))
+  expect_true(use_raw_dataset(myfile, ignore = TRUE))
   expect_true(file_test(
     "-f",
     file.path(
@@ -48,7 +49,7 @@ test_that("use_raw_data works as expected", {
   ))
   expect_error(use_raw_dataset())
   expect_error(suppressWarnings(use_raw_dataset("foobar")))
-  expect_true(use_raw_dataset(file.path(tempdir(), "subsetCars20", "R")))
+  expect_true(use_raw_dataset(file.path(tempdir(), "subsetCars20", "R"), ignore = TRUE))
 })
 
 
@@ -67,14 +68,22 @@ test_that("use_processing_script works as expected", {
     )
   )
   expect_true(use_processing_script("newScript.Rmd"))
-  expect_true(use_processing_script("newScript.Rmd", title = "foo"))
-  expect_true(use_processing_script("newScript.Rmd", title = "foo", author = "bar"))
-  expect_true(use_processing_script("newScript.Rmd", author = "bar"))
+  expect_true(use_processing_script("newScript.Rmd", overwrite = TRUE))
+  expect_false(any(grepl("foo",readLines(normalizePath(file.path(tempdir(),"subsetCars20","data-raw","newScript.Rmd"), winslash = "/")))))
+  expect_true(use_processing_script("newScript.Rmd", title = "foo", overwrite = FALSE))
+  expect_false(any(grepl("foo",readLines(normalizePath(file.path(tempdir(),"subsetCars20","data-raw","newScript.Rmd"), winslash = "/")))))
+  expect_true(use_processing_script("newScript.Rmd", title = "foo", overwrite = TRUE))
+  expect_true(any(grepl("foo",readLines(normalizePath(file.path(tempdir(),"subsetCars20","data-raw","newScript.Rmd"), winslash = "/")))))
+  
+  expect_true(use_processing_script("newScript.Rmd", 
+                                    title = "foo", author = "bar", overwrite = TRUE))
+  expect_true(use_processing_script("newScript.Rmd", author = "bar", overwrite = TRUE))
 
-  expect_true(use_processing_script("newScript.R"))
-  expect_true(use_processing_script("newScript.R", title = "foo"))
-  expect_true(use_processing_script("newScript.R", title = "foo", author = "bar"))
-  expect_true(use_processing_script("newScript.R", author = "bar"))
+  expect_true(use_processing_script("newScript.R", overwrite = TRUE))
+  expect_true(use_processing_script("newScript.R", title = "foo", overwrite = TRUE))
+  expect_true(use_processing_script("newScript.R", 
+                                    title = "foo", author = "bar", overwrite = TRUE))
+  expect_true(use_processing_script("newScript.R", author = "bar", overwrite = TRUE))
   expect_equal(readLines(
     file.path(tempdir(), "subsetCars20", "data-raw", "newScript.Rmd")
   )[2], "author: bar")
@@ -87,14 +96,14 @@ test_that("use_processing_script works as expected", {
     force = TRUE,
     recursive = TRUE
   )
-  expect_error(use_processing_script(file = "newScript.R"))
+  expect_error(use_processing_script(file = "newScript.R", overwrite = TRUE))
   dir.create(file.path(tempdir(), "subsetCars20", "data-raw"))
-  expect_error(use_processing_script(file = "newScript.foo"))
+  expect_error(use_processing_script(file = "newScript.foo", overwrite = TRUE))
   expect_error(use_processing_script("."))
   file.create(file.path(tempdir(), "foo.csv"))
-  expect_error(use_processing_script(file.path(tempdir(), "foo.csv")))
+  expect_error(use_processing_script(file.path(tempdir(), "foo.csv"), overwrite = TRUE))
   file.create(file.path(tempdir(), "foo.R"))
-  expect_true(use_processing_script(file.path(tempdir(), "foo.R")))
+  expect_true(use_processing_script(file.path(tempdir(), "foo.R"), overwrite = TRUE))
 })
 
 test_that("use_data_object works as expected", {
@@ -133,7 +142,9 @@ test_that(".update_header", {
   )
 
   con <- file(file.path(tempdir(), "foo.Rmd"), open = "wt")
-  writeLines(text = c("---", "title: My Title", "author: My Name", "---"), con = con)
+  writeLines(text = 
+               c("---", "title: My Title", "author: My Name", "---"), 
+             con = con)
   close(con)
   DataPackageR:::.update_header(
     file = file.path(tempdir(), "foo.Rmd"),
@@ -175,6 +186,12 @@ test_that(".partition_r_front_matter", {
     DataPackageR:::.partition_r_front_matter(test_string2)$front_matter,
     NULL
   )
+  
+  expect_equal(DataPackageR:::.partition_r_front_matter(
+    c("#' ---","author:Greg Finak","#' ---","body")),
+    list(front_matter = c("#' ---","author:Greg Finak","#' ---"),
+         body = "body"))
+  
   expect_equal(
     is.null(
       DataPackageR:::.partition_r_front_matter(test_string3)$body
@@ -254,6 +271,12 @@ test_that(".partition_rmd_front_matter", {
     DataPackageR:::.partition_rmd_front_matter(test_string4)$front_matter,
     NULL
   )
+  
+  expect_equal(DataPackageR:::.partition_rmd_front_matter(
+    c("---","author:Greg Finak","---","body")),
+    list(front_matter = c("---","author:Greg Finak","---"),
+         body = "body"))
+  
   expect_equal(
     is.null(
       DataPackageR:::.partition_rmd_front_matter(test_string5)$front_matter
@@ -275,8 +298,10 @@ test_that(".parse_yaml_front_matter", {
   test_string5 <-
     c(" ", "---", " input: in", " output: out", "---\n")
   test_string6 <- c("---", "input: in ", "output: out", "test:")
-  expect_null(DataPackageR:::.validate_front_matter(paste0(test_string1, collapse = "\n")))
-  expect_error(DataPackageR:::.validate_front_matter(paste0(test_string6, collapse = "\n")))
+  expect_null(DataPackageR:::.validate_front_matter(
+    paste0(test_string1, collapse = "\n")))
+  expect_error(DataPackageR:::.validate_front_matter(
+    paste0(test_string6, collapse = "\n")))
 
   expect_equal(
     (DataPackageR:::.parse_yaml_front_matter(test_string1)),
@@ -299,6 +324,7 @@ test_that(".parse_yaml_front_matter", {
     (DataPackageR:::.parse_yaml_front_matter(test_string6)),
     list(input = "in", output = "out")
   )
+  expect_equal(DataPackageR:::.parse_yaml_front_matter(c("foo:bar","yes:no","if:then")),list())
 })
 
 test_that(".mark_utf8", {
@@ -308,4 +334,6 @@ test_that(".mark_utf8", {
 
 test_that(".is_blank", {
   expect_true(DataPackageR:::.is_blank(x = ""))
+  expect_true(DataPackageR:::.is_blank(character(0)))
 })
+

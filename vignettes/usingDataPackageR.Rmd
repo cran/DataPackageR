@@ -9,8 +9,8 @@ output:
 vignette: >
   %\VignetteIndexEntry{A Guide to using DataPackageR}
   %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
-  \usepackage{graphicx}
+  %\usepackage[utf8]{inputenc}
+  %\usepackage{graphicx}
 ---
 
 ```{r, echo = FALSE}
@@ -298,7 +298,7 @@ The build process is now controlled via a `datapackager.yml` configuration file 
 
 You can migrate an old package by constructing such a config file using the `construct_yml_config()` API.
 
-```{r  construct_config, echo=1:2, eval = rmarkdown::pandoc_available()}
+```{r  construct_config, eval = rmarkdown::pandoc_available()}
 # assume I have file1.Rmd and file2.R located in /data-raw, 
 # and these create 'object1' and 'object2' respectively.
 
@@ -384,7 +384,7 @@ If a script writes files to the working directory, that is where files will appe
 
 A script (e.g., `script2.Rmd`) running after `script1.Rmd` can access a stored data object named `script1_dataset` created by `script1.Rmd` by calling
 
-`DataPackageR::datapackager_object_read("script1_dataset")`. 
+`script1_dataset <- DataPackageR::datapackager_object_read("script1_dataset")`. 
 
 Passing of data objects amongst scripts can be turned off via:
 

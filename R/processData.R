@@ -92,7 +92,7 @@ NULL
       winslash = "/"
     ), silent = TRUE)
   if (inherits(render_root, "try-error")) {
-    flog.error(paste0("render_root  = ", x, " doesn't exist."))
+    .multilog_error(paste0("render_root  = ", x, " doesn't exist."))
     # try creating, even if it's an old temp dir.
     # This isn't ideal. Would like to rather say it's a temporary
     # directory and use the current one..
@@ -120,6 +120,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
   # requireNamespace("futile.logger")
   pkg_dir <- arg
   pkg_dir <- normalizePath(pkg_dir, winslash = "/")
+  cat("\n")
   usethis::proj_set(path = pkg_dir)
   raw_data_dir <- "data-raw"
   target <- normalizePath(file.path(pkg_dir, raw_data_dir), winslash = "/")
@@ -129,7 +130,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
   # if it's an old temp dir, what then?
 
   if (!file.exists(target)) {
-    flog.fatal(paste0("Directory ", target, " doesn't exist."))
+    .multilog_fatal(paste0("Directory ", target, " doesn't exist."))
     {
       stop("exiting", call. = FALSE)
     }
@@ -144,13 +145,14 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
     dir.create(logpath, recursive = TRUE, showWarnings = FALSE)
     # open a log file
     LOGFILE <- file.path(logpath, "processing.log")
-    flog.appender(appender.tee(LOGFILE))
-    flog.info(paste0("Logging to ", LOGFILE))
+    .multilog_setup(LOGFILE)
+    .multilog_thresold(console = INFO, logfile = TRACE)
+    .multilog_trace(paste0("Logging to ", LOGFILE))
     # we know it's a proper package root, but we want to test if we have the
     # necessary subdirectories
     testme <- file.path(pkg_dir, c("R", "inst", "data", "data-raw"))
     if (!all(utils::file_test(testme, op = "-d"))) {
-      flog.fatal(paste0(
+      .multilog_fatal(paste0(
         "You need a valid package data strucutre.",
         " Missing ./R ./inst ./data or",
         "./data-raw subdirectories."
@@ -159,14 +161,14 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
         stop("exiting", call. = FALSE)
       }
     }
-    flog.info("Processing data")
+    .multilog_trace("Processing data")
     # read YAML
     ymlfile <- dir(
       path = pkg_dir, pattern = "^datapackager.yml$",
       full.names = TRUE
     )
     if (length(ymlfile) == 0) {
-      flog.fatal(paste0("Yaml configuration file not found at ", pkg_dir))
+      .multilog_fatal(paste0("Yaml configuration file not found at ", pkg_dir))
       {
         stop("exiting", call. = FALSE)
       }
@@ -174,19 +176,19 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
     ymlconf <- read_yaml(ymlfile)
     # test that the structure of the yaml file is correct!
     if (!"configuration" %in% names(ymlconf)) {
-      flog.fatal("YAML is missing 'configuration:' entry")
+      .multilog_fatal("YAML is missing 'configuration:' entry")
       {
         stop("exiting", call. = FALSE)
       }
     }
     if (!all(c("files", "objects") %in%
       purrr::map(ymlconf, names)[["configuration"]])) {
-      flog.fatal("YAML is missing files: and objects: entries")
+      .multilog_fatal("YAML is missing files: and objects: entries")
       {
         stop("exiting", call. = FALSE)
       }
     }
-    flog.info("Reading yaml configuration")
+    .multilog_trace("Reading yaml configuration")
     # files that have enable: TRUE
     assert_that("configuration" %in% names(ymlconf))
     assert_that("files" %in% names(ymlconf[["configuration"]]))
@@ -199,7 +201,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
       )
     ))
     if (length(r_files) == 0) {
-      flog.fatal("No files enabled for processing!")
+      .multilog_fatal("No files enabled for processing!")
       {
         stop("error", call. = FALSE)
       }
@@ -207,7 +209,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
     objects_to_keep <- purrr::map(ymlconf, "objects")[["configuration"]]
     render_root <- .get_render_root(ymlconf)
     if (!.validate_render_root(render_root)) {
-      flog.fatal(paste0(
+      .multilog_fatal(paste0(
         "Can't create, or render_root = ",
         render_root, " doesn't exist"
       ))
@@ -218,15 +220,14 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
 
     r_files <- file.path(raw_data_dir, r_files)
     if (all(!file.exists(r_files))) {
-      flog.fatal(paste0("Can't find any R or Rmd files."))
-      flog.fatal(paste0(
+      .multilog_fatal(paste0("Can't find any R or Rmd files."))
+      .multilog_fatal(paste0(
         "     Cant' find file: ",
         r_files[!file.exists(r_files)]
       ))
       stop("error", call. = FALSE)
     }
-    flog.info(paste0("Found ", r_files))
-    # TODO fix hidden warnings in test cases
+    .multilog_trace(paste0("Found ", r_files))
     old_data_digest <- .parse_data_digest(pkg_dir = pkg_dir)
     description_file <- normalizePath(file.path(pkg_dir, "DESCRIPTION"),
       winslash = "/"
@@ -241,7 +242,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
     # This is caught elsewhere
 
     if (length(objects_to_keep) == 0) {
-      flog.fatal("You must specify at least one data object.")
+      .multilog_fatal("You must specify at least one data object.")
       {
         stop("exiting", call. = FALSE)
       }
@@ -252,6 +253,9 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
     can_write <- FALSE
     # environment for the data
     ENVS <- new.env(hash = TRUE, parent = .GlobalEnv)
+    object_tally <- 0
+    already_built <- NULL
+    building <- NULL
     for (i in seq_along(r_files)) {
       dataenv <- new.env(hash = TRUE, parent = .GlobalEnv)
       # assign ENVS into dataenv.
@@ -259,7 +263,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
       if (deps) {
         assign(x = "ENVS", value = ENVS, dataenv)
       }
-      flog.info(paste0(
+      .multilog_trace(paste0(
         "Processing ", i, " of ",
         length(r_files), ": ", r_files[i],
         "\n"
@@ -298,18 +302,59 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
       }
       rmarkdown::render(
         input = r_files[i], envir = dataenv,
-        output_dir = logpath, clean = TRUE, knit_root_dir = render_root
+        output_dir = logpath, clean = TRUE, knit_root_dir = render_root,
+        quiet = TRUE
       )
       # The created objects
-      object_names <- ls(dataenv)
-      flog.info(paste0(
+      object_names <- setdiff(ls(dataenv),
+                              c("ENVS", already_built)) # ENVS is removed
+      object_tally <- object_tally | objects_to_keep %in% object_names
+      already_built <- unique(c(already_built,
+                                objects_to_keep[objects_to_keep %in% object_names]))
+      .multilog_trace(paste0(
         sum(objects_to_keep %in% object_names),
-        " required data objects created by ",
+        " data set(s) created by ",
+        basename(r_files[i])
+      ))
+      .done(paste0(
+        sum(objects_to_keep %in% object_names),
+        " data set(s) created by ",
         basename(r_files[i])
       ))
       if (sum(objects_to_keep %in% object_names) > 0) {
+        .add_newlines_to_vector <- function(x) {
+          x <- paste0(x, sep = "\n")
+          x[length(x)] <- gsub("\n", "", x[length(x)])
+          x
+        }
+        .bullet(
+          .add_newlines_to_vector(
+            objects_to_keep[which(objects_to_keep %in% object_names)]),
+          crayon::red("\u2022")
+        )
+      }
+      .bullet(
+        paste0(
+          "Built ",
+          ifelse(
+            sum(object_tally) == length(object_tally),
+            " all datasets!",
+            paste0(sum(object_tally), " of ",
+                   length(object_tally), " data sets.")
+          )
+        ),
+        ifelse(
+          sum(object_tally) == length(object_tally),
+          crayon::green("\u2618"),
+          crayon::green("\u2605")
+        )
+      )
+      if (sum(objects_to_keep %in% object_names) > 0) {
         for (o in objects_to_keep[objects_to_keep %in% object_names]) {
           assign(o, get(o, dataenv), ENVS)
+          # write the object to render_root
+          o_instance <- get(o,dataenv)
+          saveRDS(o_instance, file = paste0(file.path(render_root,o),".rds"))
         }
       }
     }
@@ -333,7 +378,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
       ) &
         string_check$isequal) {
         can_write <- TRUE
-        flog.info(paste0(
+        .multilog_trace(paste0(
           "Processed data sets match ",
           "existing data sets at version ",
           new_data_digest[["DataVersion"]]
@@ -347,13 +392,17 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
           pkg_description,
           new_data_digest
         )
+        #TODO what objects have changed?
+        changed_objects <- .qualify_changes(new_data_digest,old_data_digest)
+        
         .update_news_md(updated_version$new_data_digest[["DataVersion"]],
           interact = getOption("DataPackageR_interact", interactive())
         )
+        .update_news_changed_objects(changed_objects)
         pkg_description <- updated_version$pkg_description
         new_data_digest <- updated_version$new_data_digest
         can_write <- TRUE
-        flog.info(paste0(
+        .multilog_trace(paste0(
           "Data has been updated and DataVersion ",
           "string incremented automatically to ",
           new_data_digest[["DataVersion"]]
@@ -366,7 +415,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
         # edge case that shouldn't happen
         # but we test for it in the test suite
         can_write <- TRUE
-        flog.info(paste0(
+        .multilog_trace(paste0(
           "Data hasn't changed but the ",
           "DataVersion has been bumped."
         ))
@@ -376,7 +425,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
       )) {
         # edge case that shouldn't happen but
         # we test for it in the test suite.
-        flog.info(paste0(
+        .multilog_trace(paste0(
           "New DataVersion is less than ",
           "old but data are unchanged"
         ))
@@ -391,9 +440,13 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
           pkg_description,
           new_data_digest
         )
+        # TODO what objects have changed?
+        changed_objects <- .qualify_changes(new_data_digest,old_data_digest)
         .update_news_md(updated_version$new_data_digest[["DataVersion"]],
           interact = getOption("DataPackageR_interact", interactive())
         )
+        .update_news_changed_objects(changed_objects)
+        
         pkg_description <- updated_version$pkg_description
         new_data_digest <- updated_version$new_data_digest
         can_write <- TRUE
@@ -494,7 +547,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
         writeLines(text = save_docs[[i]], con = docfile)
       }
       close(docfile)
-      flog.info(
+      .multilog_trace(
         paste0(
           "Copied documentation to ",
           file.path(pkg_dir, "R", paste0(pkg_description$Package, ".R"))
@@ -509,14 +562,16 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
     # copy html files to vignettes
     .ppfiles_mkvignettes(dir = pkg_dir)
   }
-  flog.info("Done")
+  .multilog_trace("Done")
   return(can_write)
 }
 
 
 .ppfiles_mkvignettes <- function(dir = NULL) {
   cat("\n")
-  usethis::proj_set(dir)
+  if (proj_get() != dir) {
+    usethis::proj_set(dir) #nocov
+  }
   pkg <- desc::desc(dir)
   pkg$set_dep("knitr", "Suggests")
   pkg$set_dep("rmarkdown", "Suggests")
@@ -539,6 +594,13 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
       full.names = TRUE,
       recursive = FALSE
     )
+  pdffiles_for_vignettes <- 
+    list.files(
+      path = file.path(dir, "inst/extdata/Logfiles"),
+      pattern = "pdf$",
+      full.names = TRUE,
+      recursive = FALSE
+    )
   purrr::map(
     htmlfiles_for_vignettes,
     function(x) {
@@ -549,6 +611,20 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
           basename(x)
         ),
         overwrite = TRUE
+      )
+    }
+  )
+  
+  purrr::map(
+    pdffiles_for_vignettes,
+    function(x) {
+      file.copy(x,
+                file.path(
+                  dir,
+                  "inst/doc",
+                  basename(x)
+                ),
+                overwrite = TRUE
       )
     }
   )
@@ -733,6 +809,7 @@ project_data_path <- function(file = NULL) {
 #' document(path = file.path(tempdir(), pname), install=FALSE)
 #' }
 document <- function(path = ".", install = TRUE) {
+  cat("\n")
   usethis::proj_set(path = path)
   path <- usethis::proj_get()
   assert_that(file.exists(file.path(path, "data-raw", "documentation.R")))
@@ -743,7 +820,7 @@ document <- function(path = ".", install = TRUE) {
     to = file.path(path, "R", docfile),
     overwrite = TRUE
   )
-  flog.info("Rebuilding data package documentation.")
+  .multilog_trace("Rebuilding data package documentation.")
   devtools::document(pkg = path)
   location <- devtools::build(
     pkg = path, path = dirname(path),

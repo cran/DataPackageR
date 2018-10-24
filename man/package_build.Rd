@@ -5,7 +5,7 @@
 \title{Pre-process, document and build a data package}
 \usage{
 package_build(packageName = NULL, vignettes = FALSE, log = INFO,
-  deps = TRUE, install = TRUE)
+  deps = TRUE, install = FALSE)
 }
 \arguments{
 \item{packageName}{\code{character} path to package source directory. Defaults to the current path when NULL.}
@@ -35,6 +35,6 @@ datapackage_skeleton(name=pname,
    r_object_names = "tbl",
    code_files = f)
 
-package_build(file.path(tempdir(),pname))
+package_build(file.path(tempdir(),pname), install = FALSE)
 }
 }
