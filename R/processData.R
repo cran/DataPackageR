@@ -57,7 +57,7 @@
 #'    r_object_names = "tbl",
 #'    code_files = f)
 #'
-#' # call build_package to run the "foo.Rmd" processing and
+#' # call package_build to run the "foo.Rmd" processing and
 #' # build a data package.
 #' package_build(file.path(tempdir(), pname), install = FALSE)
 #'
@@ -125,6 +125,12 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
   raw_data_dir <- "data-raw"
   target <- normalizePath(file.path(pkg_dir, raw_data_dir), winslash = "/")
   raw_data_dir <- target
+  
+  #set the option that DataPackageR is building the package. On exit ensures when it leaves, it will set it back to false
+  options("DataPackageR_packagebuilding" = TRUE)
+  on.exit(options("DataPackageR_packagebuilding" = FALSE))
+  
+  
 
   # validate that render_root exists.
   # if it's an old temp dir, what then?
@@ -362,6 +368,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
     dataenv <- ENVS
     # Digest each object
     new_data_digest <- .digest_data_env(ls(ENVS), dataenv, pkg_description)
+    .newsfile()
     if (!is.null(old_data_digest)) {
       string_check <- .check_dataversion_string(
         old_data_digest,
@@ -781,6 +788,7 @@ project_data_path <- function(file = NULL) {
 #' @title Build documentation for a data package using DataPackageR.
 #' @param path \code{character} the path to the data package source root.
 #' @param install \code{logical} install and reload the package. (default TRUE)
+#' @param ... additional arguments to \code{install}
 #' @export
 #' @examples
 #' # A simple Rmd file that creates one data object
@@ -803,12 +811,12 @@ project_data_path <- function(file = NULL) {
 #'    r_object_names = "tbl",
 #'    code_files = f)
 #'
-#' # call build_package to run the "foo.Rmd" processing and
+#' # call package_build to run the "foo.Rmd" processing and
 #' # build a data package.
 #' package_build(file.path(tempdir(), pname), install = FALSE)
 #' document(path = file.path(tempdir(), pname), install=FALSE)
 #' }
-document <- function(path = ".", install = TRUE) {
+document <- function(path = ".", install = TRUE, ...) {
   cat("\n")
   usethis::proj_set(path = path)
   path <- usethis::proj_get()
@@ -827,7 +835,7 @@ document <- function(path = ".", install = TRUE) {
     vignettes = FALSE, quiet = TRUE
   )
   if (install) {
-    install.packages(location, repos = NULL, type = "source", quiet = TRUE)
+    install.packages(location, repos = NULL, type = "source", quiet = TRUE, ...)
     devtools::reload(path, quiet = TRUE)
   }
   return(TRUE)

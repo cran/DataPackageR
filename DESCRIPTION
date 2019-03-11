@@ -4,11 +4,12 @@ Title: Construct Reproducible Analytic Data Sets as R Packages
 Authors@R: 
     c(person(given = "Greg Finak", role=c("aut","cre","cph"), email="gfinak@fredhutch.org"),
       person(given = "Paul Obrecht", role=c("ctb")),
+      person(given = "Ellis Hughes", role=c("ctb")),
       person("Kara", "Woo", role = "rev",
       comment = "Kara reviewed the package for ropensci, see <https://github.com/ropensci/onboarding/issues/230>"),
       person("William", "Landau", role = "rev",
       comment = "William reviewed the package for ropensci, see <https://github.com/ropensci/onboarding/issues/230>"))
-Version: 0.15.4
+Version: 0.15.5
 Description: A framework to help construct R data packages in a 
   reproducible manner. Potentially time consuming processing of 
   raw data sets into analysis ready data sets is done in a reproducible 
@@ -27,7 +28,7 @@ Imports: digest, knitr, utils, rmarkdown, desc, yaml, purrr, roxygen2
         (>= 6.0.1), devtools (>= 1.12.0), assertthat, stringr,
         futile.logger, rprojroot, usethis, crayon
 VignetteBuilder: knitr
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Encoding: UTF-8
 Suggests: spelling, testthat, covr, data.tree
 URL: https://github.com/ropensci/DataPackageR
@@ -35,13 +36,14 @@ BugReports: https://github.com/ropensci/DataPackageR/issues
 SystemRequirements: pandoc (>= 1.12.3) - http://pandoc.org
 Language: en-US
 NeedsCompilation: no
-Packaged: 2018-10-24 19:57:18 UTC; gfinak
+Packaged: 2019-03-11 19:52:12 UTC; gfinak
 Author: Greg Finak [aut, cre, cph],
   Paul Obrecht [ctb],
+  Ellis Hughes [ctb],
   Kara Woo [rev] (Kara reviewed the package for ropensci, see
     <https://github.com/ropensci/onboarding/issues/230>),
   William Landau [rev] (William reviewed the package for ropensci, see
     <https://github.com/ropensci/onboarding/issues/230>)
 Maintainer: Greg Finak <gfinak@fredhutch.org>
 Repository: CRAN
-Date/Publication: 2018-10-24 20:20:04 UTC
+Date/Publication: 2019-03-11 20:42:59 UTC

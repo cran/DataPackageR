@@ -12,14 +12,14 @@
 
 <meta name="author" content="Greg Finak gfinak@fredhutch.org" />
 
-<meta name="date" content="2018-10-24" />
+<meta name="date" content="2019-03-11" />
 
 <title>The DataPackageR YAML configuration file.</title>
 
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
+<style type="text/css" data-origin="pandoc">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
@@ -81,7 +81,29 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -278,7 +300,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">The DataPackageR YAML configuration file.</h1>
 <h4 class="author"><em>Greg Finak <a href="mailto:gfinak@fredhutch.org" class="email">gfinak@fredhutch.org</a></em></h4>
-<h4 class="date"><em>2018-10-24</em></h4>
+<h4 class="date"><em>2019-03-11</em></h4>
 
 
 <div id="TOC">
@@ -307,7 +329,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: &#39;568733&#39;</code></pre>
+    tmp: '121298'</code></pre>
 </div>
 <div id="yaml-config-file-properties." class="section level2">
 <h2>YAML config file properties.</h2>
@@ -342,7 +364,7 @@ The names of the data objects created by the processing files, to be stored in t
 <h5>Example</h5>
 <p>The YAML config shown above was created by:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># Note this is done by the datapackage_skeleton. </span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co"># The user doesn&#39;t usually need to call </span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co"># The user doesn't usually need to call </span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co"># construct_yml_config()</span></a>
 <a class="sourceLine" id="cb2-4" data-line-number="4">yml &lt;-<span class="st"> </span>DataPackageR<span class="op">::</span><span class="kw">construct_yml_config</span>(</a>
 <a class="sourceLine" id="cb2-5" data-line-number="5">  <span class="dt">code =</span> <span class="st">&quot;subsetCars.Rmd&quot;</span>,</a>
@@ -397,7 +419,7 @@ subsetCars.Rmd</code></pre>
       enabled: no
   objects: cars_over_20
   render_root:
-    tmp: &#39;684509&#39;</code></pre>
+    tmp: '311374'</code></pre>
 </div>
 </div>
 <div id="yml_enable_compile" class="section level4">
@@ -414,7 +436,7 @@ subsetCars.Rmd</code></pre>
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: &#39;684509&#39;</code></pre>
+    tmp: '311374'</code></pre>
 </div>
 </div>
 <div id="yml_add_files" class="section level4">
@@ -433,7 +455,7 @@ subsetCars.Rmd</code></pre>
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: &#39;684509&#39;</code></pre>
+    tmp: '311374'</code></pre>
 </div>
 </div>
 <div id="yml_add_objects" class="section level4">
@@ -454,7 +476,7 @@ subsetCars.Rmd</code></pre>
   - cars_over_20
   - another_object
   render_root:
-    tmp: &#39;684509&#39;</code></pre>
+    tmp: '311374'</code></pre>
 </div>
 </div>
 <div id="yml_remove_files" class="section level4">
@@ -473,7 +495,7 @@ subsetCars.Rmd</code></pre>
   - cars_over_20
   - another_object
   render_root:
-    tmp: &#39;684509&#39;</code></pre>
+    tmp: '311374'</code></pre>
 </div>
 </div>
 <div id="yml_remove_objects" class="section level4">
@@ -490,7 +512,7 @@ subsetCars.Rmd</code></pre>
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: &#39;684509&#39;</code></pre>
+    tmp: '311374'</code></pre>
 </div>
 </div>
 <div id="yml_write" class="section level4">
