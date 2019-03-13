@@ -49,7 +49,8 @@ cat(yaml::as.yaml(yaml::yaml.load_file(file.path(tempdir(),"mtcars20","datapacka
 ## ---- eval = rmarkdown::pandoc_available()-------------------------------
 # Run the preprocessing code to build cars_over_20
 # and reproducibly enclose it in a package.
-DataPackageR:::package_build(file.path(tempdir(),"mtcars20"))
+dir.create(file.path(tempdir(),"lib"))
+DataPackageR:::package_build(file.path(tempdir(),"mtcars20"), install = TRUE,  lib = file.path(tempdir(),"lib"))
 
 ## ---- echo=FALSE, eval = rmarkdown::pandoc_available()-------------------
 df <- data.frame(pathString = file.path(
@@ -63,32 +64,35 @@ df <- data.frame(pathString = file.path(
   as.Node(df)
 
 ## ----rebuild_docs, eval = rmarkdown::pandoc_available()------------------
-document(file.path(tempdir(),"mtcars20"))
+dir.create(file.path(tempdir(),"lib")) # a temporary library directory
+document(file.path(tempdir(),"mtcars20"), lib = file.path(tempdir(),"lib"))
 
 ## ---- eval = rmarkdown::pandoc_available()-------------------------------
 # create a temporary library to install into.
 dir.create(file.path(tempdir(),"lib"))
 # Let's use the package we just created.
 install.packages(file.path(tempdir(),"mtcars20_1.0.tar.gz"), type = "source", repos = NULL, lib = file.path(tempdir(),"lib"))
-if(!"package:mtcars20"%in%search())
-  attachNamespace('mtcars20') #use library() in your code
+lns <- loadNamespace    
+if (!"package:mtcars20"%in%search())
+  attachNamespace(lns('mtcars20',lib.loc = file.path(tempdir(),"lib"))) #use library() in your code
 data("cars_over_20") # load the data
 
 cars_over_20 # now we can use it.
 ?cars_over_20 # See the documentation you wrote in data-raw/documentation.R.
   
-vignettes <- vignette(package = "mtcars20")
+vignettes <- vignette(package = "mtcars20", lib.loc = file.path(tempdir(),"lib"))
 vignettes$results
 
 ## ---- eval = rmarkdown::pandoc_available()-------------------------------
 # We can easily check the version of the data
-DataPackageR::data_version("mtcars20")
+DataPackageR::data_version("mtcars20", lib.loc = file.path(tempdir(),"lib"))
 
 # You can use an assert to check the data version in  reports and
 # analyses that use the packaged data.
 assert_data_version(data_package_name = "mtcars20",
                     version_string = "0.1.0",
-                    acceptable = "equal")  #If this fails, execution stops
+                    acceptable = "equal",
+                    lib.loc = file.path(tempdir(),"lib"))  #If this fails, execution stops
                                            #and provides an informative error.
 
 ## ----construct_config, eval = rmarkdown::pandoc_available()--------------

@@ -1,11 +1,11 @@
-8965c007268f71c0025cf00e602d1c74 *DESCRIPTION
+83494f4884948e8a51ba6e0d9cfbe4a3 *DESCRIPTION
 7575afc7af9d9f3c06c6db84ccd56c0c *LICENSE
 c21ba1841b2bdb3a0cfc40b46f198ca9 *NAMESPACE
 539571be665b92482dde27f057dd1e1d *NEWS.md
 e26655af5cbf733f3bbbb7c03a128f58 *R/01.R
 11f0cd23d5e19e3fa850f43595035ad5 *R/autodoc.R
 d25f1423049f1083ee52c2b312848142 *R/build.R
-be1718cc242ba5ccf54a5618f56d9bec *R/dataversion.r
+81409c384051d61ebafa433dfbb42dde *R/dataversion.r
 b624ec04b97962c40e78caa373c6ccf4 *R/digests.R
 deb36281d6e8187a40eb8f4879dc7e10 *R/environments.R
 ea8b8cfd15d9612b46c9e8cb16a2bdb7 *R/ignore.R
@@ -26,10 +26,10 @@ e5bc0a2ab73e1c86095a8a906ecc442e *README.md
 5c41f82c2ba0d37a798aaf21aa25591f *inst/WORDLIST
 a3de64eeb5da86c6086006012a6b6cdb *inst/doc/YAML_CONFIG.R
 6ec67f3e8933870a3b3f1cbbd0ae449b *inst/doc/YAML_CONFIG.Rmd
-1bb65232d61ea2a5c9cc32d7b74e9c06 *inst/doc/YAML_CONFIG.html
-80add7a8304224ac25801c840ab9a9f6 *inst/doc/usingDataPackageR.R
-a01030ea4d30e7806aee2a2f3f7040b0 *inst/doc/usingDataPackageR.Rmd
-5cd25242eb69cedf6856b87950a39cb7 *inst/doc/usingDataPackageR.html
+fb835ff231f8824dc9155a564bd26b38 *inst/doc/YAML_CONFIG.html
+16d66e86793afa629e891925d87b7150 *inst/doc/usingDataPackageR.R
+f245ea87b30cee9358d01b12ffaa68f1 *inst/doc/usingDataPackageR.Rmd
+bcfa61770351c3e877cacf508543e2e4 *inst/doc/usingDataPackageR.html
 c4c93f9ed0fb8948755d4b011b969368 *inst/extdata/tests/extra.rmd
 541658a4574d2f0236f874e8f7a1504c *inst/extdata/tests/raw_data/testdata.csv
 fe7f88482a35bb9f0ec19e58e6bf0269 *inst/extdata/tests/rfileTest.R
@@ -38,7 +38,7 @@ f7ecc02a0c608e8452703f1809a8e84b *inst/extdata/tests/rfileTest_noheader.R
 1b9053468aaabbbb0917815e3a4a24fe *inst/extdata/tests/subsetCars.html
 37ebc2be55b932230a7d98349b3d2aa9 *man/DataPackageR-package.Rd
 6ba7de22d1aadf74db27a3d79ce25a41 *man/DataPackageR.Rd
-78a6ef127c27c5b63c47cb7bea19805a *man/assert_data_version.Rd
+454cf5737f1c68cd425b9343887dbab7 *man/assert_data_version.Rd
 65f44399ed2b9a8b72e75dffb37e2e30 *man/construct_yml_config.Rd
 2c6787289812b87ba78e19c0d222918b *man/data_version.Rd
 94016e71978ae346f6855f4e766d7902 *man/datapackage_skeleton.Rd
@@ -60,7 +60,7 @@ a59baf17662f894c8adfa8ecc4899959 *tests/spelling.R
 2b01fd93bff24192f0cb196c9c45458c *tests/testthat/test-conditional-build.R
 e6363740195cdf0132990a0a31c432fd *tests/testthat/test-data-version.R
 5c8aa431618a6e2335e34719ff5532bc *tests/testthat/test-datapackager-object-read.R
-dc05347d8d0b58f9b29c853d1383928d *tests/testthat/test-document.R
+15c65dfe95119661a0f93e0077bdbddd *tests/testthat/test-document.R
 7b5ab8fb1c97071103ca524bf363e617 *tests/testthat/test-edge-cases.R
 78c50b875a6e680e3d22f6a4f6006d2f *tests/testthat/test-ignore.R
 1a3f8e51f74239b8a100e62107857bee *tests/testthat/test-logger.R
@@ -80,4 +80,4 @@ a5263ab0f0511ed53fe901f6b882e3d5 *tests/testthat/test-yaml-config.R
 454c90d4b782ce2044c32d787ea457ca *tests/testthat/test-yaml-manipulation.R
 fdd6f65d8d54a791796f17024d6adf13 *tests/testthat/test-yaml.R
 6ec67f3e8933870a3b3f1cbbd0ae449b *vignettes/YAML_CONFIG.Rmd
-a01030ea4d30e7806aee2a2f3f7040b0 *vignettes/usingDataPackageR.Rmd
+f245ea87b30cee9358d01b12ffaa68f1 *vignettes/usingDataPackageR.Rmd
