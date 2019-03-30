@@ -12,7 +12,7 @@
 
 <meta name="author" content="Greg Finak gfinak@fredhutch.org" />
 
-<meta name="date" content="2019-03-13" />
+<meta name="date" content="2019-03-30" />
 
 <title>The DataPackageR YAML configuration file.</title>
 
@@ -37,7 +37,7 @@ a.sourceLine { text-indent: -1em; padding-left: 1em; }
 pre.numberSource a.sourceLine
   { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+  { content: attr(title);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
     border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
@@ -291,6 +291,9 @@ code > span.al { color: #ff0000; font-weight: bold; }
 code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
+
+
+
 </head>
 
 <body>
@@ -299,8 +302,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 <h1 class="title toc-ignore">The DataPackageR YAML configuration file.</h1>
-<h4 class="author"><em>Greg Finak <a href="mailto:gfinak@fredhutch.org" class="email">gfinak@fredhutch.org</a></em></h4>
-<h4 class="date"><em>2019-03-13</em></h4>
+<h4 class="author">Greg Finak <a href="mailto:gfinak@fredhutch.org" class="email">gfinak@fredhutch.org</a></h4>
+<h4 class="date">2019-03-30</h4>
 
 
 <div id="TOC">
@@ -329,7 +332,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: '879971'</code></pre>
+    tmp: &#39;131658&#39;</code></pre>
 </div>
 <div id="yaml-config-file-properties." class="section level2">
 <h2>YAML config file properties.</h2>
@@ -346,7 +349,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <li><code>enabled:</code> A logical <code>yes</code>, <code>no</code> flag indicating whether the file should be rendered during the build, or whether it should be skipped. This is useful for ‘turning off’ long running processing tasks if they have not changed. Disabling processing of a file will not overwrite existing documentation or data objecs created during previous builds.</li>
 </ul></li>
 <li><p><code>objects:</code></p>
-The names of the data objects created by the processing files, to be stored in the package. These names are compared against the objects created in the render environment by each file. They names must match.</li>
+<p>The names of the data objects created by the processing files, to be stored in the package. These names are compared against the objects created in the render environment by each file. They names must match.</p></li>
 <li><p><code>render_root:</code></p>
 <p>The directory where the <code>Rmd</code> or <code>R</code> files will be rendered. Defaults to a randomly named subdirectory of <code>tempdir()</code>. Allows workflows that use multiple scripts and create file system artifacts to function correctly by simply writing to and reading from the working directory.</p></li>
 </ul>
@@ -363,13 +366,13 @@ The names of the data objects created by the processing files, to be stored in t
 <div id="example" class="section level5">
 <h5>Example</h5>
 <p>The YAML config shown above was created by:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># Note this is done by the datapackage_skeleton. </span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co"># The user doesn't usually need to call </span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co"># construct_yml_config()</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">yml &lt;-<span class="st"> </span>DataPackageR<span class="op">::</span><span class="kw">construct_yml_config</span>(</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">  <span class="dt">code =</span> <span class="st">&quot;subsetCars.Rmd&quot;</span>,</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6">  <span class="dt">data =</span> <span class="st">&quot;cars_over_20&quot;</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7">  )</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># Note this is done by the datapackage_skeleton. </span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="co"># The user doesn&#39;t usually need to call </span></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="co"># construct_yml_config()</span></a>
+<a class="sourceLine" id="cb2-4" title="4">yml &lt;-<span class="st"> </span>DataPackageR<span class="op">::</span><span class="kw">construct_yml_config</span>(</a>
+<a class="sourceLine" id="cb2-5" title="5">  <span class="dt">code =</span> <span class="st">&quot;subsetCars.Rmd&quot;</span>,</a>
+<a class="sourceLine" id="cb2-6" title="6">  <span class="dt">data =</span> <span class="st">&quot;cars_over_20&quot;</span></a>
+<a class="sourceLine" id="cb2-7" title="7">  )</a></code></pre></div>
 </div>
 </div>
 <div id="yml_find" class="section level4">
@@ -378,11 +381,11 @@ The names of the data objects created by the processing files, to be stored in t
 <div id="example-1" class="section level5">
 <h5>Example</h5>
 <p>Read the YAML config file from the <code>mtcars20</code> example.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># returns an r object representation of</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co"># the config file.</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">mtcars20_config &lt;-<span class="st"> </span><span class="kw">yml_find</span>(</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;mtcars20&quot;</span>)</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">  )</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># returns an r object representation of</span></a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="co"># the config file.</span></a>
+<a class="sourceLine" id="cb3-3" title="3">mtcars20_config &lt;-<span class="st"> </span><span class="kw">yml_find</span>(</a>
+<a class="sourceLine" id="cb3-4" title="4">  <span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;mtcars20&quot;</span>)</a>
+<a class="sourceLine" id="cb3-5" title="5">  )</a></code></pre></div>
 </div>
 </div>
 <div id="yml_list_objects" class="section level4">
@@ -390,7 +393,7 @@ The names of the data objects created by the processing files, to be stored in t
 <p>List the <code>objects</code> in a config read by <code>yml_find</code>.</p>
 <div id="example-2" class="section level5">
 <h5>Example</h5>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">  <span class="kw">yml_list_objects</span>(yml)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">  <span class="kw">yml_list_objects</span>(yml)</a></code></pre></div>
 <pre><code>
 cars_over_20</code></pre>
 </div>
@@ -400,7 +403,7 @@ cars_over_20</code></pre>
 <p>List the <code>files</code> in a config read by <code>yml_find</code>.</p>
 <div id="example-3" class="section level5">
 <h5>Example</h5>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">  <span class="kw">yml_list_files</span>(yml)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">  <span class="kw">yml_list_files</span>(yml)</a></code></pre></div>
 <pre><code>
 subsetCars.Rmd</code></pre>
 </div>
@@ -410,16 +413,16 @@ subsetCars.Rmd</code></pre>
 <p>Disable compilation of named files in a config read by <code>yml_find</code>.</p>
 <div id="example-4" class="section level5">
 <h5>Example</h5>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">yml_disabled &lt;-<span class="st"> </span><span class="kw">yml_disable_compile</span>(</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">    yml,</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">    <span class="dt">filenames =</span> <span class="st">&quot;subsetCars.Rmd&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">yml_disabled &lt;-<span class="st"> </span><span class="kw">yml_disable_compile</span>(</a>
+<a class="sourceLine" id="cb8-2" title="2">    yml,</a>
+<a class="sourceLine" id="cb8-3" title="3">    <span class="dt">filenames =</span> <span class="st">&quot;subsetCars.Rmd&quot;</span>)</a></code></pre></div>
 <pre><code>configuration:
   files:
     subsetCars.Rmd:
       enabled: no
   objects: cars_over_20
   render_root:
-    tmp: '383207'</code></pre>
+    tmp: &#39;382147&#39;</code></pre>
 </div>
 </div>
 <div id="yml_enable_compile" class="section level4">
@@ -427,16 +430,16 @@ subsetCars.Rmd</code></pre>
 <p>Enable compilation of named files in a config read by <code>yml_find</code>.</p>
 <div id="example-5" class="section level5">
 <h5>Example</h5>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">yml_enabled &lt;-<span class="st"> </span><span class="kw">yml_enable_compile</span>(</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">    yml,</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3">    <span class="dt">filenames =</span> <span class="st">&quot;subsetCars.Rmd&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">yml_enabled &lt;-<span class="st"> </span><span class="kw">yml_enable_compile</span>(</a>
+<a class="sourceLine" id="cb10-2" title="2">    yml,</a>
+<a class="sourceLine" id="cb10-3" title="3">    <span class="dt">filenames =</span> <span class="st">&quot;subsetCars.Rmd&quot;</span>)</a></code></pre></div>
 <pre><code>configuration:
   files:
     subsetCars.Rmd:
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: '383207'</code></pre>
+    tmp: &#39;382147&#39;</code></pre>
 </div>
 </div>
 <div id="yml_add_files" class="section level4">
@@ -444,9 +447,9 @@ subsetCars.Rmd</code></pre>
 <p>Add named files to a config read by <code>yml_find</code>.</p>
 <div id="example-6" class="section level5">
 <h5>Example</h5>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">yml_twofiles &lt;-<span class="st"> </span><span class="kw">yml_add_files</span>(</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">    yml,</a>
-<a class="sourceLine" id="cb12-3" data-line-number="3">    <span class="dt">filenames =</span> <span class="st">&quot;anotherFile.Rmd&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">yml_twofiles &lt;-<span class="st"> </span><span class="kw">yml_add_files</span>(</a>
+<a class="sourceLine" id="cb12-2" title="2">    yml,</a>
+<a class="sourceLine" id="cb12-3" title="3">    <span class="dt">filenames =</span> <span class="st">&quot;anotherFile.Rmd&quot;</span>)</a></code></pre></div>
 <pre><code>configuration:
   files:
     subsetCars.Rmd:
@@ -455,7 +458,7 @@ subsetCars.Rmd</code></pre>
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: '383207'</code></pre>
+    tmp: &#39;382147&#39;</code></pre>
 </div>
 </div>
 <div id="yml_add_objects" class="section level4">
@@ -463,9 +466,9 @@ subsetCars.Rmd</code></pre>
 <p>Add named objects to a config read by <code>yml_find</code>.</p>
 <div id="example-7" class="section level5">
 <h5>Example</h5>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">yml_twoobj &lt;-<span class="st"> </span><span class="kw">yml_add_objects</span>(</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">    yml_twofiles,</a>
-<a class="sourceLine" id="cb14-3" data-line-number="3">    <span class="dt">objects =</span> <span class="st">&quot;another_object&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">yml_twoobj &lt;-<span class="st"> </span><span class="kw">yml_add_objects</span>(</a>
+<a class="sourceLine" id="cb14-2" title="2">    yml_twofiles,</a>
+<a class="sourceLine" id="cb14-3" title="3">    <span class="dt">objects =</span> <span class="st">&quot;another_object&quot;</span>)</a></code></pre></div>
 <pre><code>configuration:
   files:
     subsetCars.Rmd:
@@ -476,7 +479,7 @@ subsetCars.Rmd</code></pre>
   - cars_over_20
   - another_object
   render_root:
-    tmp: '383207'</code></pre>
+    tmp: &#39;382147&#39;</code></pre>
 </div>
 </div>
 <div id="yml_remove_files" class="section level4">
@@ -484,9 +487,9 @@ subsetCars.Rmd</code></pre>
 <p>Remove named files from a config read by <code>yml_find</code>.</p>
 <div id="example-8" class="section level5">
 <h5>Example</h5>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">yml_twoobj &lt;-<span class="st"> </span><span class="kw">yml_remove_files</span>(</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">    yml_twoobj,</a>
-<a class="sourceLine" id="cb16-3" data-line-number="3">    <span class="dt">filenames =</span> <span class="st">&quot;anotherFile.Rmd&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">yml_twoobj &lt;-<span class="st"> </span><span class="kw">yml_remove_files</span>(</a>
+<a class="sourceLine" id="cb16-2" title="2">    yml_twoobj,</a>
+<a class="sourceLine" id="cb16-3" title="3">    <span class="dt">filenames =</span> <span class="st">&quot;anotherFile.Rmd&quot;</span>)</a></code></pre></div>
 <pre><code>configuration:
   files:
     subsetCars.Rmd:
@@ -495,7 +498,7 @@ subsetCars.Rmd</code></pre>
   - cars_over_20
   - another_object
   render_root:
-    tmp: '383207'</code></pre>
+    tmp: &#39;382147&#39;</code></pre>
 </div>
 </div>
 <div id="yml_remove_objects" class="section level4">
@@ -503,16 +506,16 @@ subsetCars.Rmd</code></pre>
 <p>Remove named objects from a config read by <code>yml_find</code>.</p>
 <div id="example-9" class="section level5">
 <h5>Example</h5>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">yml_oneobj &lt;-<span class="st"> </span><span class="kw">yml_remove_objects</span>(</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">    yml_twoobj,</a>
-<a class="sourceLine" id="cb18-3" data-line-number="3">    <span class="dt">objects =</span> <span class="st">&quot;another_object&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">yml_oneobj &lt;-<span class="st"> </span><span class="kw">yml_remove_objects</span>(</a>
+<a class="sourceLine" id="cb18-2" title="2">    yml_twoobj,</a>
+<a class="sourceLine" id="cb18-3" title="3">    <span class="dt">objects =</span> <span class="st">&quot;another_object&quot;</span>)</a></code></pre></div>
 <pre><code>configuration:
   files:
     subsetCars.Rmd:
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: '383207'</code></pre>
+    tmp: &#39;382147&#39;</code></pre>
 </div>
 </div>
 <div id="yml_write" class="section level4">
@@ -520,7 +523,7 @@ subsetCars.Rmd</code></pre>
 <p>Write a modified config to its package path.</p>
 <div id="example-10" class="section level5">
 <h5>Example</h5>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">yml_write</span>(yml_oneobj, <span class="dt">path =</span> <span class="st">&quot;path_to_package&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1"><span class="kw">yml_write</span>(yml_oneobj, <span class="dt">path =</span> <span class="st">&quot;path_to_package&quot;</span>)</a></code></pre></div>
 <p>The <code>yml_oneobj</code> read by <code>yml_find()</code> carries an attribute that is the path to the package. The user doesn’t need to pass a <code>path</code> to <code>yml_write</code> if the config has been read by <code>yml_find</code>.</p>
 </div>
 </div>

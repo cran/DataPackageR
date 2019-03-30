@@ -33,4 +33,6 @@ test_that("can add a data item", {
     recursive = TRUE,
     force = TRUE
   )
+  setwd(tempdir())
+  try(usethis::proj_set(NULL),silent = TRUE) #wrap in try for usethis 1.4 vs 1.5
 })

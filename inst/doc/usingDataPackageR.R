@@ -29,7 +29,7 @@ DataPackageR::datapackage_skeleton(name = "mtcars20",
   path = tempdir() 
   #dependencies argument is empty
   #raw_data_dir argument is empty.
-  ) 
+  )
 
 ## ----dirstructure,echo=FALSE, eval = rmarkdown::pandoc_available()-------
 library(data.tree)
