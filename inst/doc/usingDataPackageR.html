@@ -1,45 +1,64 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Greg Finak gfinak@fredhutch.org" />
 
-<meta name="date" content="2019-03-30" />
+<meta name="date" content="2021-03-16" />
 
 <title>Using DataPackageR</title>
 
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -48,9 +67,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -96,7 +115,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -107,189 +126,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<style type="text/css">body {
-background-color: #fff;
-margin: 1em auto;
-max-width: 700px;
-overflow: visible;
-padding-left: 2em;
-padding-right: 2em;
-font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-font-size: 14px;
-line-height: 1.35;
-}
-#header {
-text-align: center;
-}
-#TOC {
-clear: both;
-margin: 0 0 10px 10px;
-padding: 4px;
-width: 400px;
-border: 1px solid #CCCCCC;
-border-radius: 5px;
-background-color: #f6f6f6;
-font-size: 13px;
-line-height: 1.3;
-}
-#TOC .toctitle {
-font-weight: bold;
-font-size: 15px;
-margin-left: 5px;
-}
-#TOC ul {
-padding-left: 40px;
-margin-left: -1.5em;
-margin-top: 5px;
-margin-bottom: 5px;
-}
-#TOC ul ul {
-margin-left: -2em;
-}
-#TOC li {
-line-height: 16px;
-}
-table {
-margin: 1em auto;
-border-width: 1px;
-border-color: #DDDDDD;
-border-style: outset;
-border-collapse: collapse;
-}
-table th {
-border-width: 2px;
-padding: 5px;
-border-style: inset;
-}
-table td {
-border-width: 1px;
-border-style: inset;
-line-height: 18px;
-padding: 5px 5px;
-}
-table, table th, table td {
-border-left-style: none;
-border-right-style: none;
-}
-table thead, table tr.even {
-background-color: #f7f7f7;
-}
-p {
-margin: 0.5em 0;
-}
-blockquote {
-background-color: #f6f6f6;
-padding: 0.25em 0.75em;
-}
-hr {
-border-style: solid;
-border: none;
-border-top: 1px solid #777;
-margin: 28px 0;
-}
-dl {
-margin-left: 0;
-}
-dl dd {
-margin-bottom: 13px;
-margin-left: 13px;
-}
-dl dt {
-font-weight: bold;
-}
-ul {
-margin-top: 0;
-}
-ul li {
-list-style: circle outside;
-}
-ul ul {
-margin-bottom: 0;
-}
-pre, code {
-background-color: #f7f7f7;
-border-radius: 3px;
-color: #333;
-white-space: pre-wrap; 
-}
-pre {
-border-radius: 3px;
-margin: 5px 0px 10px 0px;
-padding: 10px;
-}
-pre:not([class]) {
-background-color: #f7f7f7;
-}
-code {
-font-family: Consolas, Monaco, 'Courier New', monospace;
-font-size: 85%;
-}
-p > code, li > code {
-padding: 2px 0px;
-}
-div.figure {
-text-align: center;
-}
-img {
-background-color: #FFFFFF;
-padding: 2px;
-border: 1px solid #DDDDDD;
-border-radius: 3px;
-border: 1px solid #CCCCCC;
-margin: 0 5px;
-}
-h1 {
-margin-top: 0;
-font-size: 35px;
-line-height: 40px;
-}
-h2 {
-border-bottom: 4px solid #f7f7f7;
-padding-top: 10px;
-padding-bottom: 2px;
-font-size: 145%;
-}
-h3 {
-border-bottom: 2px solid #f7f7f7;
-padding-top: 10px;
-font-size: 120%;
-}
-h4 {
-border-bottom: 1px solid #f7f7f7;
-margin-left: 8px;
-font-size: 105%;
-}
-h5, h6 {
-border-bottom: 1px solid #ccc;
-font-size: 105%;
-}
-a {
-color: #0033dd;
-text-decoration: none;
-}
-a:hover {
-color: #6666ff; }
-a:visited {
-color: #800080; }
-a:visited:hover {
-color: #BB00BB; }
-a[href^="http:"] {
-text-decoration: underline; }
-a[href^="https:"] {
-text-decoration: underline; }
 
-code > span.kw { color: #555; font-weight: bold; } 
-code > span.dt { color: #902000; } 
-code > span.dv { color: #40a070; } 
-code > span.bn { color: #d14; } 
-code > span.fl { color: #d14; } 
-code > span.ch { color: #d14; } 
-code > span.st { color: #d14; } 
-code > span.co { color: #888888; font-style: italic; } 
-code > span.ot { color: #007020; } 
-code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
-</style>
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
 
 
 
@@ -303,43 +141,50 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Using DataPackageR</h1>
 <h4 class="author">Greg Finak <a href="mailto:gfinak@fredhutch.org" class="email">gfinak@fredhutch.org</a></h4>
-<h4 class="date">2019-03-30</h4>
+<h4 class="date">2021-03-16</h4>
 
 
 <div id="TOC">
 <ul>
 <li><a href="#purpose">Purpose</a></li>
-<li><a href="#set-up-a-new-data-package.">Set up a new data package.</a><ul>
+<li><a href="#set-up-a-new-data-package.">Set up a new data package.</a>
+<ul>
 <li><a href="#whats-in-the-package-skeleton-structure">What’s in the package skeleton structure?</a></li>
 <li><a href="#a-few-words-about-the-yaml-config-file">A few words about the YAML config file</a></li>
 <li><a href="#where-do-i-put-my-raw-datasets">Where do I put my raw datasets?</a></li>
 <li><a href="#an-api-to-read-raw-data-sets-from-within-an-r-or-rmd-procesing-script.">An API to read raw data sets from within an R or Rmd procesing script.</a></li>
 <li><a href="#yaml-header-metadata-for-r-files-and-rmd-files.">YAML header metadata for R files and Rmd files.</a></li>
 </ul></li>
-<li><a href="#build-the-data-package.">Build the data package.</a><ul>
+<li><a href="#build-the-data-package.">Build the data package.</a>
+<ul>
 <li><a href="#documenting-your-data-set-changes-in-news.md">Documenting your data set changes in NEWS.md</a></li>
 <li><a href="#why-not-just-use-r-cmd-build">Why not just use R CMD build?</a></li>
 <li><a href="#a-log-of-the-build-process">A log of the build process</a></li>
 <li><a href="#a-note-about-the-package-source-directory-after-building.">A note about the package source directory after building.</a></li>
 <li><a href="#update-the-autogenerated-documentation.">Update the autogenerated documentation.</a></li>
 </ul></li>
-<li><a href="#installing-and-using-the-new-data-package">Installing and using the new data package</a><ul>
+<li><a href="#installing-and-using-the-new-data-package">Installing and using the new data package</a>
+<ul>
 <li><a href="#accessing-vignettes-data-sets-and-data-set-documentation.">Accessing vignettes, data sets, and data set documentation.</a></li>
 <li><a href="#using-the-dataversion">Using the DataVersion</a></li>
 </ul></li>
-<li><a href="#migrating-old-data-packages.">Migrating old data packages.</a><ul>
+<li><a href="#migrating-old-data-packages.">Migrating old data packages.</a>
+<ul>
 <li><a href="#create-a-datapackager.yml-file">Create a datapackager.yml file</a></li>
 <li><a href="#reading-data-sets-from-rmd-files">Reading data sets from Rmd files</a></li>
 </ul></li>
 <li><a href="#partial-builds">Partial builds</a></li>
-<li><a href="#multi-script-pipelines.">Multi-script pipelines.</a><ul>
+<li><a href="#multi-script-pipelines.">Multi-script pipelines.</a>
+<ul>
 <li><a href="#file-system-artifacts">File system artifacts</a></li>
 <li><a href="#passing-data-objects-to-subsequent-scripts.">Passing data objects to subsequent scripts.</a></li>
 </ul></li>
-<li><a href="#next-steps">Next steps</a><ul>
+<li><a href="#next-steps">Next steps</a>
+<ul>
 <li><a href="#place-your-package-under-source-control">Place your package under source control</a></li>
 </ul></li>
-<li><a href="#additional-details">Additional Details</a><ul>
+<li><a href="#additional-details">Additional Details</a>
+<ul>
 <li><a href="#fingerprints-of-stored-data-objects">Fingerprints of stored data objects</a></li>
 </ul></li>
 </ul>
@@ -355,47 +200,52 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </div>
 <div id="set-up-a-new-data-package." class="section level2">
 <h2>Set up a new data package.</h2>
-<p>We’ll set up a new data package based on <code>mtcars</code> example in the <a href="https://github.com/RGLab/DataPackageR/blob/master/README.md">README</a>. The <code>datapackage_skeleton()</code> API is used to set up a new package. The user needs to provide:</p>
+<p>We’ll set up a new data package based on <code>mtcars</code> example in the <a href="https://github.com/ropensci/DataPackageR/blob/master/README.md">README</a>. The <code>datapackage_skeleton()</code> API is used to set up a new package. The user needs to provide:</p>
 <ul>
 <li>R or Rmd code files that do data processing.</li>
 <li>A list of R object names created by those code files.</li>
 <li>Optionally a path to a directory of raw data (will be copied into the package).</li>
 <li>Optionally a list of additional code files that may be dependencies of your R scripts.</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(DataPackageR)</a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co"># Let&#39;s reproducibly package up</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="co"># the cars in the mtcars dataset</span></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="co"># with speed &gt; 20.</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="co"># Our dataset will be called cars_over_20.</span></a>
-<a class="sourceLine" id="cb1-7" title="7"></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="co"># Get the code file that turns the raw data</span></a>
-<a class="sourceLine" id="cb1-9" title="9"><span class="co"># to our packaged and processed analysis-ready dataset.</span></a>
-<a class="sourceLine" id="cb1-10" title="10">processing_code &lt;-</a>
-<a class="sourceLine" id="cb1-11" title="11"><span class="st">  </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, </a>
-<a class="sourceLine" id="cb1-12" title="12">              <span class="st">&quot;tests&quot;</span>,</a>
-<a class="sourceLine" id="cb1-13" title="13">              <span class="st">&quot;subsetCars.Rmd&quot;</span>,</a>
-<a class="sourceLine" id="cb1-14" title="14">              <span class="dt">package =</span> <span class="st">&quot;DataPackageR&quot;</span>)</a>
-<a class="sourceLine" id="cb1-15" title="15"></a>
-<a class="sourceLine" id="cb1-16" title="16"><span class="co"># Create the package framework.</span></a>
-<a class="sourceLine" id="cb1-17" title="17">DataPackageR<span class="op">::</span><span class="kw">datapackage_skeleton</span>(<span class="dt">name =</span> <span class="st">&quot;mtcars20&quot;</span>,</a>
-<a class="sourceLine" id="cb1-18" title="18">  <span class="dt">force =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb1-19" title="19">  <span class="dt">code_files =</span> processing_code,</a>
-<a class="sourceLine" id="cb1-20" title="20">  <span class="dt">r_object_names =</span> <span class="st">&quot;cars_over_20&quot;</span>,</a>
-<a class="sourceLine" id="cb1-21" title="21">  <span class="dt">path =</span> <span class="kw">tempdir</span>() </a>
-<a class="sourceLine" id="cb1-22" title="22">  <span class="co">#dependencies argument is empty</span></a>
-<a class="sourceLine" id="cb1-23" title="23">  <span class="co">#raw_data_dir argument is empty.</span></a>
-<a class="sourceLine" id="cb1-24" title="24">  )</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DataPackageR)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s reproducibly package up</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># the cars in the mtcars dataset</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># with speed &gt; 20.</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Our dataset will be called cars_over_20.</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the code file that turns the raw data</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># to our packaged and processed analysis-ready dataset.</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>processing_code <span class="ot">&lt;-</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;tests&quot;</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;subsetCars.Rmd&quot;</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">package =</span> <span class="st">&quot;DataPackageR&quot;</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the package framework.</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>DataPackageR<span class="sc">::</span><span class="fu">datapackage_skeleton</span>(<span class="at">name =</span> <span class="st">&quot;mtcars20&quot;</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">force =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">code_files =</span> processing_code,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">r_object_names =</span> <span class="st">&quot;cars_over_20&quot;</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">path =</span> <span class="fu">tempdir</span>() </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#dependencies argument is empty</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">#raw_data_dir argument is empty.</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>√ Creating <span class="st">&#39;C:/Users/ehhughes/AppData/Local/Temp/RtmpmOobo5/mtcars20/&#39;</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>√ Setting active project to <span class="st">&#39;C:/Users/ehhughes/AppData/Local/Temp/RtmpmOobo5/mtcars20&#39;</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>√ Creating <span class="st">&#39;R/&#39;</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>√ Writing <span class="st">&#39;DESCRIPTION&#39;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>√ Writing <span class="st">&#39;NAMESPACE&#39;</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>√ Setting active project to <span class="st">&#39;&lt;no active project&gt;&#39;</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>√ Setting active project to <span class="st">&#39;C:/Users/ehhughes/AppData/Local/Temp/RtmpmOobo5/mtcars20&#39;</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>√ Creating <span class="st">&#39;data-raw/&#39;</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>√ Creating <span class="st">&#39;data/&#39;</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>√ Creating <span class="st">&#39;inst/extdata/&#39;</span></span></code></pre></div>
 <div id="whats-in-the-package-skeleton-structure" class="section level3">
 <h3>What’s in the package skeleton structure?</h3>
 <p>This has created a datapackage source tree named “mtcars20” (in a temporary directory). For a real use case you would pick a <code>path</code> on your filesystem where you could then initialize a new github repository for the package.</p>
 <p>The contents of <code>mtcars20</code> are:</p>
-<pre><code>Registered S3 methods overwritten by &#39;ggplot2&#39;:
-  method         from 
-  [.quosures     rlang
-  c.quosures     rlang
-  print.quosures rlang
-                levelName
+<pre><code>                levelName
 1  mtcars20              
 2   ¦--DESCRIPTION       
 3   ¦--R                 
@@ -404,9 +254,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 6   ¦--data-raw          
 7   ¦   °--subsetCars.Rmd
 8   ¦--datapackager.yml  
-9   ¦--inst              
-10  ¦   °--extdata       
-11  °--man               </code></pre>
+9   °--inst              
+10      °--extdata       </code></pre>
 <p>You should fill out the <code>DESCRIPTION</code> file to describe your data package. It contains a new <code>DataVersion</code> string that will be automatically incremented when the data package is built <em>if the packaged data has changed</em>.</p>
 <p>The user-provided code files reside in <code>data-raw</code>. They are executed during the data package build process.</p>
 </div>
@@ -420,12 +269,12 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: &#39;694769&#39;</code></pre>
+    tmp: &#39;135981&#39;</code></pre>
 <p>The two main pieces of information in the configuration are a list of the files to be processed and the data sets the package will store.</p>
 <p>This example packages an R data set named <code>cars_over_20</code> (the name was passed in to <code>datapackage_skeleton()</code>). It is created by the <code>subsetCars.Rmd</code> file.</p>
 <p>The objects must be listed in the yaml configuration file. <code>datapackage_skeleton()</code> ensures this is done for you automatically.</p>
 <p>DataPackageR provides an API for modifying this file, so it does not need to be done by hand.</p>
-<p>Further information on the contents of the YAML configuration file, and the API are in the <a href="YAML_CONFIG.md">YAML Configuration Details</a></p>
+<p>Further information on the contents of the YAML configuration file, and the API are in the <a href="YAML_CONFIG.html">YAML Configuration Details</a></p>
 </div>
 <div id="where-do-i-put-my-raw-datasets" class="section level3">
 <h3>Where do I put my raw datasets?</h3>
@@ -438,12 +287,12 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>As stated in the README, in order for your processing scripts to be portable, you should not use absolute paths to files. DataPackageR provides an API to point to the data package root directory and the <code>inst/extdata</code> and <code>data</code> subdirectories. These are useful for constructing portable paths in your code to read files from these locations.</p>
 <p>For example: to construct a path to a file named “mydata.csv” located in <code>inst/extdata</code> in your data package source tree:</p>
 <ul>
-<li>use <code>DataPackageR::project_extdata_path(&quot;mydata.csv&quot;)</code> in your <code>R</code> or <code>Rmd</code> file. This would return: e.g., /var/folders/jh/x0h3v3pd4dd497g3gtzsm8500000gn/T//RtmpEc77FQ/mtcars20/inst/extdata/mydata.csv</li>
+<li>use <code>DataPackageR::project_extdata_path(&quot;mydata.csv&quot;)</code> in your <code>R</code> or <code>Rmd</code> file. This would return: e.g., C:/mtcars20/inst/extdata/mydata.csv</li>
 </ul>
 <p>Similarly:</p>
 <ul>
-<li><code>DataPackageR::project_path()</code> constructs a path to the data package root directory. (e.g., /var/folders/jh/x0h3v3pd4dd497g3gtzsm8500000gn/T//RtmpEc77FQ/mtcars20)</li>
-<li><code>DataPackageR::project_data_path()</code> constructs a path to the data package <code>data</code> subdirectory. (e.g., /var/folders/jh/x0h3v3pd4dd497g3gtzsm8500000gn/T//RtmpEc77FQ/mtcars20/data)</li>
+<li><code>DataPackageR::project_path()</code> constructs a path to the data package root directory. (e.g., C:/mtcars20)</li>
+<li><code>DataPackageR::project_data_path()</code> constructs a path to the data package <code>data</code> subdirectory. (e.g., C:/mtcars20/data)</li>
 </ul>
 <p>Raw data sets that are stored externally (outside the data package source tree) can be constructed relative to the <code>project_path()</code>.</p>
 </div>
@@ -463,74 +312,73 @@ data &lt;- runif(100)</code></pre>
 <div id="build-the-data-package." class="section level2">
 <h2>Build the data package.</h2>
 <p>Once the skeleton framework is set up,</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># Run the preprocessing code to build cars_over_20</span></a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="co"># and reproducibly enclose it in a package.</span></a>
-<a class="sourceLine" id="cb5-3" title="3"><span class="kw">dir.create</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</a>
-<a class="sourceLine" id="cb5-4" title="4">DataPackageR<span class="op">:::</span><span class="kw">package_build</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;mtcars20&quot;</span>), <span class="dt">install =</span> <span class="ot">TRUE</span>,  <span class="dt">lib =</span> <span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</a>
-<a class="sourceLine" id="cb5-5" title="5"></a>
-<a class="sourceLine" id="cb5-6" title="6">✔ Setting active project to <span class="st">&#39;/private/var/folders/jh/x0h3v3pd4dd497g3gtzsm8500000gn/T/RtmpEc77FQ/mtcars20&#39;</span></a>
-<a class="sourceLine" id="cb5-7" title="7">✔ <span class="dv">1</span> data <span class="kw">set</span>(s) created by subsetCars.Rmd</a>
-<a class="sourceLine" id="cb5-8" title="8">• cars_over_<span class="dv">20</span></a>
-<a class="sourceLine" id="cb5-9" title="9">☘ Built  all datasets<span class="op">!</span></a>
-<a class="sourceLine" id="cb5-10" title="10">Non<span class="op">-</span>interactive NEWS.md file update.</a>
-<a class="sourceLine" id="cb5-11" title="11"></a>
-<a class="sourceLine" id="cb5-12" title="12">✔ Creating <span class="st">&#39;vignettes/&#39;</span></a>
-<a class="sourceLine" id="cb5-13" title="13">✔ Creating <span class="st">&#39;inst/doc/&#39;</span></a>
-<a class="sourceLine" id="cb5-14" title="14">First time using roxygen2. Upgrading automatically...</a>
-<a class="sourceLine" id="cb5-15" title="15">Updating roxygen version <span class="cf">in</span> <span class="op">/</span>private<span class="op">/</span>var<span class="op">/</span>folders<span class="op">/</span>jh<span class="op">/</span>x0h3v3pd4dd497g3gtzsm8500000gn<span class="op">/</span>T<span class="op">/</span>RtmpEc77FQ<span class="op">/</span>mtcars20<span class="op">/</span>DESCRIPTION</a>
-<a class="sourceLine" id="cb5-16" title="16">Writing NAMESPACE</a>
-<a class="sourceLine" id="cb5-17" title="17">Loading mtcars20</a>
-<a class="sourceLine" id="cb5-18" title="18">Writing mtcars20.Rd</a>
-<a class="sourceLine" id="cb5-19" title="19">Writing cars_over_<span class="fl">20.</span>Rd</a>
-<a class="sourceLine" id="cb5-20" title="20">  </a>
-<a class="sourceLine" id="cb5-21" title="21">   checking <span class="cf">for</span> file ‘<span class="op">/</span>private<span class="op">/</span>var<span class="op">/</span>folders<span class="op">/</span>jh<span class="op">/</span>x0h3v3pd4dd497g3gtzsm8500000gn<span class="op">/</span>T<span class="op">/</span>RtmpEc77FQ<span class="op">/</span>mtcars20<span class="op">/</span>DESCRIPTION’ ...</a>
-<a class="sourceLine" id="cb5-22" title="22">  </a>
-<a class="sourceLine" id="cb5-23" title="23">✔  checking <span class="cf">for</span> file ‘<span class="op">/</span>private<span class="op">/</span>var<span class="op">/</span>folders<span class="op">/</span>jh<span class="op">/</span>x0h3v3pd4dd497g3gtzsm8500000gn<span class="op">/</span>T<span class="op">/</span>RtmpEc77FQ<span class="op">/</span>mtcars20<span class="op">/</span>DESCRIPTION’</a>
-<a class="sourceLine" id="cb5-24" title="24"></a>
-<a class="sourceLine" id="cb5-25" title="25">  </a>
-<a class="sourceLine" id="cb5-26" title="26">─  preparing ‘mtcars20’<span class="op">:</span></a>
-<a class="sourceLine" id="cb5-27" title="27"></a>
-<a class="sourceLine" id="cb5-28" title="28"><span class="st">  </span></a>
-<a class="sourceLine" id="cb5-29" title="29"><span class="st">   </span>checking DESCRIPTION meta<span class="op">-</span>information ...</a>
-<a class="sourceLine" id="cb5-30" title="30">  </a>
-<a class="sourceLine" id="cb5-31" title="31">✔  checking DESCRIPTION meta<span class="op">-</span>information</a>
-<a class="sourceLine" id="cb5-32" title="32"></a>
-<a class="sourceLine" id="cb5-33" title="33">  </a>
-<a class="sourceLine" id="cb5-34" title="34">─  checking <span class="cf">for</span> LF line<span class="op">-</span>endings <span class="cf">in</span> source and make files and shell scripts</a>
-<a class="sourceLine" id="cb5-35" title="35"></a>
-<a class="sourceLine" id="cb5-36" title="36">  </a>
-<a class="sourceLine" id="cb5-37" title="37">─  checking <span class="cf">for</span> empty or unneeded directories</a>
-<a class="sourceLine" id="cb5-38" title="38"></a>
-<a class="sourceLine" id="cb5-39" title="39">  </a>
-<a class="sourceLine" id="cb5-40" title="40">─  looking to see <span class="cf">if</span> a ‘data<span class="op">/</span>datalist’ file should be added</a>
-<a class="sourceLine" id="cb5-41" title="41"></a>
-<a class="sourceLine" id="cb5-42" title="42">  </a>
-<a class="sourceLine" id="cb5-43" title="43">     NB<span class="op">:</span><span class="st"> </span>this package now depends on <span class="kw">R</span> (<span class="op">&gt;=</span><span class="st"> </span><span class="dv">3</span>.<span class="fl">5.0</span>)</a>
-<a class="sourceLine" id="cb5-44" title="44"></a>
-<a class="sourceLine" id="cb5-45" title="45">  </a>
-<a class="sourceLine" id="cb5-46" title="46">     WARNING<span class="op">:</span><span class="st"> </span>Added dependency on R <span class="op">&gt;=</span><span class="st"> </span><span class="dv">3</span>.<span class="fl">5.0</span> because serialized objects <span class="cf">in</span>  serialize<span class="op">/</span>load version <span class="dv">3</span> cannot be read <span class="cf">in</span> older versions of R.  <span class="kw">File</span>(s) containing such objects<span class="op">:</span><span class="st"> &#39;mtcars20/data/cars_over_20.rda&#39;</span></a>
-<a class="sourceLine" id="cb5-47" title="47"></a>
-<a class="sourceLine" id="cb5-48" title="48">  </a>
-<a class="sourceLine" id="cb5-49" title="49">─  building <span class="st">&#39;mtcars20_1.0.tar.gz&#39;</span></a>
-<a class="sourceLine" id="cb5-50" title="50"></a>
-<a class="sourceLine" id="cb5-51" title="51">  </a>
-<a class="sourceLine" id="cb5-52" title="52">   </a>
-<a class="sourceLine" id="cb5-53" title="53"></a>
-<a class="sourceLine" id="cb5-54" title="54">Reloading attached mtcars20</a>
-<a class="sourceLine" id="cb5-55" title="55">Warning <span class="cf">in</span> <span class="kw">library</span>(package, <span class="dt">lib.loc =</span> lib.loc, <span class="dt">character.only =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb5-56" title="56"><span class="dt">logical.return =</span> <span class="ot">TRUE</span>, <span class="op">:</span><span class="st"> </span>there is no package called <span class="st">&#39;mtcars20&#39;</span></a>
-<a class="sourceLine" id="cb5-57" title="57">Next Steps </a>
-<a class="sourceLine" id="cb5-58" title="58"><span class="fl">1.</span> Update your package documentation. </a>
-<a class="sourceLine" id="cb5-59" title="59">   <span class="op">-</span><span class="st"> </span>Edit the documentation.R file <span class="cf">in</span> the package source data<span class="op">-</span>raw subdirectory and update the roxygen markup. </a>
-<a class="sourceLine" id="cb5-60" title="60">   <span class="op">-</span><span class="st"> </span>Rebuild the package documentation with  <span class="kw">document</span>() . </a>
-<a class="sourceLine" id="cb5-61" title="61"><span class="fl">2.</span> Add your package to source control. </a>
-<a class="sourceLine" id="cb5-62" title="62">   <span class="op">-</span><span class="st"> </span>Call  git init .  <span class="cf">in</span> the package source root directory. </a>
-<a class="sourceLine" id="cb5-63" title="63">   <span class="op">-</span><span class="st">  </span>git add  the package files. </a>
-<a class="sourceLine" id="cb5-64" title="64">   <span class="op">-</span><span class="st">  </span>git commit  your new package. </a>
-<a class="sourceLine" id="cb5-65" title="65">   <span class="op">-</span><span class="st"> </span>Set up a github repository <span class="cf">for</span> your pacakge. </a>
-<a class="sourceLine" id="cb5-66" title="66">   <span class="op">-</span><span class="st"> </span>Add the github repository as a remote of your local package repository. </a>
-<a class="sourceLine" id="cb5-67" title="67">   <span class="op">-</span><span class="st">  </span>git push  your local repository to gitub. </a>
-<a class="sourceLine" id="cb5-68" title="68">[<span class="dv">1</span>] <span class="st">&quot;/private/var/folders/jh/x0h3v3pd4dd497g3gtzsm8500000gn/T/RtmpEc77FQ/mtcars20_1.0.tar.gz&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the preprocessing code to build cars_over_20</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># and reproducibly enclose it in a package.</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>DataPackageR<span class="sc">:::</span><span class="fu">package_build</span>(<span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;mtcars20&quot;</span>), <span class="at">install =</span> <span class="cn">TRUE</span>,  <span class="at">lib =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="sc">&lt;</span>U<span class="sc">+</span><span class="dv">2714</span><span class="sc">&gt;</span> <span class="dv">1</span> data <span class="fu">set</span>(s) created by subsetCars.Rmd</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>• cars_over_20</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="sc">&lt;</span>U<span class="sc">+</span><span class="dv">2618</span><span class="sc">&gt;</span> Built  all datasets<span class="sc">!</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>Non<span class="sc">-</span>interactive NEWS.md file update.</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>√ Creating <span class="st">&#39;vignettes/&#39;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>√ Creating <span class="st">&#39;inst/doc/&#39;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>First time using roxygen2. Upgrading automatically...</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>Loading mtcars20</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>Writing NAMESPACE</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>Writing mtcars20.Rd</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>Writing cars_over_20.Rd</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>   checking <span class="cf">for</span> file <span class="st">&#39;C:\Users</span><span class="sc">\e</span><span class="st">hhughes\AppData\Local\Temp\RtmpmOobo5\mtcars20/DESCRIPTION&#39;</span> ...</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>v  checking <span class="cf">for</span> file <span class="st">&#39;C:\Users</span><span class="sc">\e</span><span class="st">hhughes\AppData\Local\Temp\RtmpmOobo5\mtcars20/DESCRIPTION&#39;</span> (361ms)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>  preparing <span class="st">&#39;mtcars20&#39;</span><span class="sc">:</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>   checking DESCRIPTION meta<span class="sc">-</span>information ...</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>   checking DESCRIPTION meta<span class="sc">-</span>information ... </span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>v  checking DESCRIPTION meta<span class="sc">-</span>information</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>  checking <span class="cf">for</span> LF line<span class="sc">-</span>endings <span class="cf">in</span> source and make files and shell scripts</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>  checking <span class="cf">for</span> empty or unneeded directories</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>   NB<span class="sc">:</span> this package now depends on <span class="fu">R</span> (<span class="sc">&gt;=</span> </span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>     NB<span class="sc">:</span> this package now depends on <span class="fu">R</span> (<span class="sc">&gt;=</span> <span class="dv">3</span>.<span class="fl">5.0</span>)</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>     WARNING<span class="sc">:</span> Added dependency on R <span class="sc">&gt;=</span> <span class="dv">3</span>.<span class="fl">5.0</span> because serialized objects <span class="cf">in</span>  serialize<span class="sc">/</span>load version <span class="dv">3</span> cannot be read <span class="cf">in</span> older versions of R.  <span class="fu">File</span>(s) containing such objects<span class="sc">:</span> <span class="st">&#39;mtcars20/data/cars_over_20.rda&#39;</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>  building <span class="st">&#39;mtcars20_1.0.tar.gz&#39;</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>Next Steps </span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="fl">1.</span> Update your package documentation. </span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>   <span class="sc">-</span> Edit the documentation.R file <span class="cf">in</span> the package source data<span class="sc">-</span>raw subdirectory and update the roxygen markup. </span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>   <span class="sc">-</span> Rebuild the package documentation with  <span class="fu">document</span>() . </span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="fl">2.</span> Add your package to source control. </span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>   <span class="sc">-</span> Call  git init .  <span class="cf">in</span> the package source root directory. </span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>   <span class="sc">-</span>  git add  the package files. </span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>   <span class="sc">-</span>  git commit  your new package. </span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>   <span class="sc">-</span> Set up a github repository <span class="cf">for</span> your pacakge. </span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>   <span class="sc">-</span> Add the github repository as a remote of your local package repository. </span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>   <span class="sc">-</span>  git push  your local repository to gitub. </span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;C:/Users/ehhughes/AppData/Local/Temp/RtmpmOobo5/mtcars20_1.0.tar.gz&quot;</span></span></code></pre></div>
 <div id="documenting-your-data-set-changes-in-news.md" class="section level3">
 <h3>Documenting your data set changes in NEWS.md</h3>
 <p>When you build a package in interactive mode, you will be prompted to input text describing the changes to your data package (one line).</p>
@@ -591,17 +439,13 @@ A description of your changes to the package
 <p>The processed <code>Rd</code> files can be found in <code>man</code>.</p>
 <p>The autogenerated documentation source is in the <code>documentation.R</code> file in <code>data-raw</code>.</p>
 <p>You should update this file to properly document your objects. Then rebuild the documentation:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">dir.create</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;lib&quot;</span>)) <span class="co"># a temporary library directory</span></a>
-<a class="sourceLine" id="cb8-2" title="2">Warning <span class="cf">in</span> <span class="kw">dir.create</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(), <span class="st">&quot;lib&quot;</span>))<span class="op">:</span><span class="st"> &#39;/var/folders/jh/</span></a>
-<a class="sourceLine" id="cb8-3" title="3"><span class="st">x0h3v3pd4dd497g3gtzsm8500000gn/T//RtmpEc77FQ/lib&#39;</span> already exists</a>
-<a class="sourceLine" id="cb8-4" title="4"><span class="kw">document</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;mtcars20&quot;</span>), <span class="dt">lib =</span> <span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</a>
-<a class="sourceLine" id="cb8-5" title="5"></a>
-<a class="sourceLine" id="cb8-6" title="6">✔ Setting active project to <span class="st">&#39;/private/var/folders/jh/x0h3v3pd4dd497g3gtzsm8500000gn/T/RtmpEc77FQ/mtcars20&#39;</span></a>
-<a class="sourceLine" id="cb8-7" title="7">Updating mtcars20 documentation</a>
-<a class="sourceLine" id="cb8-8" title="8">Loading mtcars20</a>
-<a class="sourceLine" id="cb8-9" title="9">Warning <span class="cf">in</span> <span class="kw">library</span>(package, <span class="dt">lib.loc =</span> lib.loc, <span class="dt">character.only =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb8-10" title="10"><span class="dt">logical.return =</span> <span class="ot">TRUE</span>, <span class="op">:</span><span class="st"> </span>there is no package called <span class="st">&#39;mtcars20&#39;</span></a>
-<a class="sourceLine" id="cb8-11" title="11">[<span class="dv">1</span>] <span class="ot">TRUE</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;lib&quot;</span>)) <span class="co"># a temporary library directory</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>Warning <span class="cf">in</span> <span class="fu">dir.create</span>(<span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&quot;lib&quot;</span>))<span class="sc">:</span> <span class="st">&#39;C:</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">\Users</span><span class="sc">\e</span><span class="st">hhughes\AppData\Local\Temp\RtmpmOobo5\lib&#39;</span> already exists</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">document</span>(<span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;mtcars20&quot;</span>), <span class="at">lib =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>Updating mtcars20 documentation</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>Loading mtcars20</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">TRUE</span></span></code></pre></div>
 <p>This is done without reprocessing the data.</p>
 <div id="dont-forget-to-rebuild-the-package." class="section level4">
 <h4>Dont’ forget to rebuild the package.</h4>
@@ -617,81 +461,79 @@ A description of your changes to the package
 <p>When the package is installed, these will be accessible via the <code>vignette()</code> API.</p>
 <p>The vignette will detail the processing performed by the <code>subsetCars.Rmd</code> processing script.</p>
 <p>The data set documentation will be accessible via <code>?cars_over_20</code>, and the data sets via <code>data()</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="co"># create a temporary library to install into.</span></a>
-<a class="sourceLine" id="cb9-2" title="2"><span class="kw">dir.create</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</a>
-<a class="sourceLine" id="cb9-3" title="3">Warning <span class="cf">in</span> <span class="kw">dir.create</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(), <span class="st">&quot;lib&quot;</span>))<span class="op">:</span><span class="st"> &#39;/var/folders/jh/</span></a>
-<a class="sourceLine" id="cb9-4" title="4"><span class="st">x0h3v3pd4dd497g3gtzsm8500000gn/T//RtmpEc77FQ/lib&#39;</span> already exists</a>
-<a class="sourceLine" id="cb9-5" title="5"><span class="co"># Let&#39;s use the package we just created.</span></a>
-<a class="sourceLine" id="cb9-6" title="6"><span class="kw">install.packages</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;mtcars20_1.0.tar.gz&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;source&quot;</span>, <span class="dt">repos =</span> <span class="ot">NULL</span>, <span class="dt">lib =</span> <span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</a>
-<a class="sourceLine" id="cb9-7" title="7">lns &lt;-<span class="st"> </span>loadNamespace    </a>
-<a class="sourceLine" id="cb9-8" title="8"><span class="cf">if</span> (<span class="op">!</span><span class="st">&quot;package:mtcars20&quot;</span><span class="op">%in%</span><span class="kw">search</span>())</a>
-<a class="sourceLine" id="cb9-9" title="9">  <span class="kw">attachNamespace</span>(<span class="kw">lns</span>(<span class="st">&#39;mtcars20&#39;</span>,<span class="dt">lib.loc =</span> <span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))) <span class="co">#use library() in your code</span></a>
-<a class="sourceLine" id="cb9-10" title="10"><span class="kw">data</span>(<span class="st">&quot;cars_over_20&quot;</span>) <span class="co"># load the data</span></a>
-<a class="sourceLine" id="cb9-11" title="11"></a>
-<a class="sourceLine" id="cb9-12" title="12">cars_over_<span class="dv">20</span> <span class="co"># now we can use it.</span></a>
-<a class="sourceLine" id="cb9-13" title="13">   speed dist</a>
-<a class="sourceLine" id="cb9-14" title="14"><span class="dv">44</span>    <span class="dv">22</span>   <span class="dv">66</span></a>
-<a class="sourceLine" id="cb9-15" title="15"><span class="dv">45</span>    <span class="dv">23</span>   <span class="dv">54</span></a>
-<a class="sourceLine" id="cb9-16" title="16"><span class="dv">46</span>    <span class="dv">24</span>   <span class="dv">70</span></a>
-<a class="sourceLine" id="cb9-17" title="17"><span class="dv">47</span>    <span class="dv">24</span>   <span class="dv">92</span></a>
-<a class="sourceLine" id="cb9-18" title="18"><span class="dv">48</span>    <span class="dv">24</span>   <span class="dv">93</span></a>
-<a class="sourceLine" id="cb9-19" title="19"><span class="dv">49</span>    <span class="dv">24</span>  <span class="dv">120</span></a>
-<a class="sourceLine" id="cb9-20" title="20"><span class="dv">50</span>    <span class="dv">25</span>   <span class="dv">85</span></a>
-<a class="sourceLine" id="cb9-21" title="21">?cars_over_<span class="dv">20</span> <span class="co"># See the documentation you wrote in data-raw/documentation.R.</span></a>
-<a class="sourceLine" id="cb9-22" title="22">  </a>
-<a class="sourceLine" id="cb9-23" title="23">vignettes &lt;-<span class="st"> </span><span class="kw">vignette</span>(<span class="dt">package =</span> <span class="st">&quot;mtcars20&quot;</span>, <span class="dt">lib.loc =</span> <span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</a>
-<a class="sourceLine" id="cb9-24" title="24">vignettes<span class="op">$</span>results</a>
-<a class="sourceLine" id="cb9-25" title="25">      Package   </a>
-<a class="sourceLine" id="cb9-26" title="26">Topic <span class="st">&quot;mtcars20&quot;</span></a>
-<a class="sourceLine" id="cb9-27" title="27">      LibPath                                                           </a>
-<a class="sourceLine" id="cb9-28" title="28">Topic <span class="st">&quot;/var/folders/jh/x0h3v3pd4dd497g3gtzsm8500000gn/T//RtmpEc77FQ/lib&quot;</span></a>
-<a class="sourceLine" id="cb9-29" title="29">      Item         Title                                            </a>
-<a class="sourceLine" id="cb9-30" title="30">Topic <span class="st">&quot;subsetCars&quot;</span> <span class="st">&quot;A Test Document for DataPackageR (source, html)&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a temporary library to install into.</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>Warning <span class="cf">in</span> <span class="fu">dir.create</span>(<span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&quot;lib&quot;</span>))<span class="sc">:</span> <span class="st">&#39;C:</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="st">\Users</span><span class="sc">\e</span><span class="st">hhughes\AppData\Local\Temp\RtmpmOobo5\lib&#39;</span> already exists</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s use the package we just created.</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;mtcars20_1.0.tar.gz&quot;</span>), <span class="at">type =</span> <span class="st">&quot;source&quot;</span>, <span class="at">repos =</span> <span class="cn">NULL</span>, <span class="at">lib =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>lns <span class="ot">&lt;-</span> loadNamespace    </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="st">&quot;package:mtcars20&quot;</span><span class="sc">%in%</span><span class="fu">search</span>())</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attachNamespace</span>(<span class="fu">lns</span>(<span class="st">&#39;mtcars20&#39;</span>,<span class="at">lib.loc =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))) <span class="co">#use library() in your code</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;cars_over_20&quot;</span>) <span class="co"># load the data</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>cars_over_20 <span class="co"># now we can use it.</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>   speed dist</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="dv">44</span>    <span class="dv">22</span>   <span class="dv">66</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="dv">45</span>    <span class="dv">23</span>   <span class="dv">54</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="dv">46</span>    <span class="dv">24</span>   <span class="dv">70</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="dv">47</span>    <span class="dv">24</span>   <span class="dv">92</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="dv">48</span>    <span class="dv">24</span>   <span class="dv">93</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="dv">49</span>    <span class="dv">24</span>  <span class="dv">120</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="dv">50</span>    <span class="dv">25</span>   <span class="dv">85</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>?cars_over_20 <span class="co"># See the documentation you wrote in data-raw/documentation.R.</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>vignettes <span class="ot">&lt;-</span> <span class="fu">vignette</span>(<span class="at">package =</span> <span class="st">&quot;mtcars20&quot;</span>, <span class="at">lib.loc =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>vignettes<span class="sc">$</span>results</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>      Package    LibPath                                              </span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>Topic <span class="st">&quot;mtcars20&quot;</span> <span class="st">&quot;C:/Users/ehhughes/AppData/Local/Temp/RtmpmOobo5/lib&quot;</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>      Item         Title                                            </span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>Topic <span class="st">&quot;subsetCars&quot;</span> <span class="st">&quot;A Test Document for DataPackageR (source, html)&quot;</span></span></code></pre></div>
 </div>
 <div id="using-the-dataversion" class="section level3">
 <h3>Using the DataVersion</h3>
 <p>Your downstream data analysis can depend on a specific version of the data in your data package by testing the DataVersion string in the DESCRIPTION file.</p>
 <p>We provide an API for this:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="co"># We can easily check the version of the data</span></a>
-<a class="sourceLine" id="cb10-2" title="2">DataPackageR<span class="op">::</span><span class="kw">data_version</span>(<span class="st">&quot;mtcars20&quot;</span>, <span class="dt">lib.loc =</span> <span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</a>
-<a class="sourceLine" id="cb10-3" title="3">[<span class="dv">1</span>] <span class="st">&#39;0.1.0&#39;</span></a>
-<a class="sourceLine" id="cb10-4" title="4"></a>
-<a class="sourceLine" id="cb10-5" title="5"><span class="co"># You can use an assert to check the data version in  reports and</span></a>
-<a class="sourceLine" id="cb10-6" title="6"><span class="co"># analyses that use the packaged data.</span></a>
-<a class="sourceLine" id="cb10-7" title="7"><span class="kw">assert_data_version</span>(<span class="dt">data_package_name =</span> <span class="st">&quot;mtcars20&quot;</span>,</a>
-<a class="sourceLine" id="cb10-8" title="8">                    <span class="dt">version_string =</span> <span class="st">&quot;0.1.0&quot;</span>,</a>
-<a class="sourceLine" id="cb10-9" title="9">                    <span class="dt">acceptable =</span> <span class="st">&quot;equal&quot;</span>,</a>
-<a class="sourceLine" id="cb10-10" title="10">                    <span class="dt">lib.loc =</span> <span class="kw">file.path</span>(<span class="kw">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))  <span class="co">#If this fails, execution stops</span></a>
-<a class="sourceLine" id="cb10-11" title="11">                                           <span class="co">#and provides an informative error.</span></a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We can easily check the version of the data</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>DataPackageR<span class="sc">::</span><span class="fu">data_version</span>(<span class="st">&quot;mtcars20&quot;</span>, <span class="at">lib.loc =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&#39;0.1.0&#39;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># You can use an assert to check the data version in  reports and</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># analyses that use the packaged data.</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">assert_data_version</span>(<span class="at">data_package_name =</span> <span class="st">&quot;mtcars20&quot;</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">version_string =</span> <span class="st">&quot;0.1.0&quot;</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">acceptable =</span> <span class="st">&quot;equal&quot;</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">lib.loc =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;lib&quot;</span>))  <span class="co">#If this fails, execution stops</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>                                           <span class="co">#and provides an informative error.</span></span></code></pre></div>
 </div>
 </div>
 <div id="migrating-old-data-packages." class="section level1">
 <h1>Migrating old data packages.</h1>
 <p>Version 1.12.0 has moved away from controlling the build process using <code>datasets.R</code> and an additional <code>masterfile</code> argument.</p>
-<p>The build process is now controlled via a <code>datapackager.yml</code> configuration file located in the package root directory. (see <a href="YAML_CONFIG.md">YAML Configuration Details</a>)</p>
+<p>The build process is now controlled via a <code>datapackager.yml</code> configuration file located in the package root directory. (see <a href="YAML_CONFIG.html">YAML Configuration Details</a>)</p>
 <div id="create-a-datapackager.yml-file" class="section level3">
 <h3>Create a datapackager.yml file</h3>
 <p>You can migrate an old package by constructing such a config file using the <code>construct_yml_config()</code> API.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="co"># assume I have file1.Rmd and file2.R located in /data-raw, </span></a>
-<a class="sourceLine" id="cb11-2" title="2"><span class="co"># and these create &#39;object1&#39; and &#39;object2&#39; respectively.</span></a>
-<a class="sourceLine" id="cb11-3" title="3"></a>
-<a class="sourceLine" id="cb11-4" title="4">config &lt;-<span class="st"> </span><span class="kw">construct_yml_config</span>(<span class="dt">code =</span> <span class="kw">c</span>(<span class="st">&quot;file1.Rmd&quot;</span>, <span class="st">&quot;file2.R&quot;</span>),</a>
-<a class="sourceLine" id="cb11-5" title="5">                              <span class="dt">data =</span> <span class="kw">c</span>(<span class="st">&quot;object1&quot;</span>, <span class="st">&quot;object2&quot;</span>))</a>
-<a class="sourceLine" id="cb11-6" title="6"><span class="kw">cat</span>(yaml<span class="op">::</span><span class="kw">as.yaml</span>(config))</a>
-<a class="sourceLine" id="cb11-7" title="7">configuration<span class="op">:</span></a>
-<a class="sourceLine" id="cb11-8" title="8"><span class="st">  </span>files<span class="op">:</span></a>
-<a class="sourceLine" id="cb11-9" title="9"><span class="st">    </span>file1.Rmd<span class="op">:</span></a>
-<a class="sourceLine" id="cb11-10" title="10"><span class="st">      </span>enabled<span class="op">:</span><span class="st"> </span>yes</a>
-<a class="sourceLine" id="cb11-11" title="11">    file2.R<span class="op">:</span></a>
-<a class="sourceLine" id="cb11-12" title="12"><span class="st">      </span>enabled<span class="op">:</span><span class="st"> </span>yes</a>
-<a class="sourceLine" id="cb11-13" title="13">  objects<span class="op">:</span></a>
-<a class="sourceLine" id="cb11-14" title="14"><span class="st">  </span><span class="op">-</span><span class="st"> </span>object1</a>
-<a class="sourceLine" id="cb11-15" title="15">  <span class="op">-</span><span class="st"> </span>object2</a>
-<a class="sourceLine" id="cb11-16" title="16">  render_root<span class="op">:</span></a>
-<a class="sourceLine" id="cb11-17" title="17"><span class="st">    </span>tmp<span class="op">:</span><span class="st"> &#39;350214&#39;</span></a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assume I have file1.Rmd and file2.R located in /data-raw, </span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># and these create &#39;object1&#39; and &#39;object2&#39; respectively.</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>config <span class="ot">&lt;-</span> <span class="fu">construct_yml_config</span>(<span class="at">code =</span> <span class="fu">c</span>(<span class="st">&quot;file1.Rmd&quot;</span>, <span class="st">&quot;file2.R&quot;</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">data =</span> <span class="fu">c</span>(<span class="st">&quot;object1&quot;</span>, <span class="st">&quot;object2&quot;</span>))</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(yaml<span class="sc">::</span><span class="fu">as.yaml</span>(config))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>configuration<span class="sc">:</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  files<span class="sc">:</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    file1.Rmd<span class="sc">:</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>      enabled<span class="sc">:</span> yes</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    file2.R<span class="sc">:</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>      enabled<span class="sc">:</span> yes</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  objects<span class="sc">:</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span> object1</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span> object2</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  render_root<span class="sc">:</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    tmp<span class="sc">:</span> <span class="st">&#39;289541&#39;</span></span></code></pre></div>
 <p><code>config</code> is a newly constructed yaml configuration object. It can be written to the package directory:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">path_to_package &lt;-<span class="st"> </span><span class="kw">tempdir</span>() <span class="co">#e.g., if tempdir() was the root of our package.</span></a>
-<a class="sourceLine" id="cb12-2" title="2"><span class="kw">yml_write</span>(config, <span class="dt">path =</span> path_to_package)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>path_to_package <span class="ot">&lt;-</span> <span class="fu">tempdir</span>() <span class="co">#e.g., if tempdir() was the root of our package.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">yml_write</span>(config, <span class="at">path =</span> path_to_package)</span></code></pre></div>
 <p>Now the package at <code>path_to_package</code> will build with version 1.12.0 or greater.</p>
 </div>
 <div id="reading-data-sets-from-rmd-files" class="section level3">
@@ -700,19 +542,19 @@ A description of your changes to the package
 <p>For example:</p>
 <div id="the-old-way" class="section level4">
 <h4>The old way</h4>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="co"># read &#39;myfile.csv&#39; from inst/extdata relative to data-raw where the Rmd is rendered.</span></a>
-<a class="sourceLine" id="cb13-2" title="2"><span class="kw">read.csv</span>(<span class="kw">file.path</span>(<span class="st">&quot;../inst/extdata&quot;</span>,<span class="st">&quot;myfile.csv&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read &#39;myfile.csv&#39; from inst/extdata relative to data-raw where the Rmd is rendered.</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">read.csv</span>(<span class="fu">file.path</span>(<span class="st">&quot;../inst/extdata&quot;</span>,<span class="st">&quot;myfile.csv&quot;</span>))</span></code></pre></div>
 <p>Now <code>Rmd</code> and <code>R</code> scripts are processed in <code>render_root</code> defined in the yaml config.</p>
 <p>To read a raw data set we can get the path to the package source directory using an API call:</p>
 </div>
 <div id="the-new-way" class="section level4">
 <h4>The new way</h4>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="co"># DataPackageR::project_extdata_path() returns the path to the data package inst/extdata subdirectory directory.</span></a>
-<a class="sourceLine" id="cb14-2" title="2"><span class="co"># DataPackageR::project_path() returns the path to the data package root directory.</span></a>
-<a class="sourceLine" id="cb14-3" title="3"><span class="co"># DataPackageR::project_data_path() returns the path to the data package data subdirectory directory.</span></a>
-<a class="sourceLine" id="cb14-4" title="4"><span class="kw">read.csv</span>(</a>
-<a class="sourceLine" id="cb14-5" title="5">    DataPackageR<span class="op">::</span><span class="kw">project_extdata_path</span>(<span class="st">&quot;myfile.csv&quot;</span>)</a>
-<a class="sourceLine" id="cb14-6" title="6">    )</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DataPackageR::project_extdata_path() returns the path to the data package inst/extdata subdirectory directory.</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># DataPackageR::project_path() returns the path to the data package root directory.</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># DataPackageR::project_data_path() returns the path to the data package data subdirectory directory.</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">read.csv</span>(</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    DataPackageR<span class="sc">::</span><span class="fu">project_extdata_path</span>(<span class="st">&quot;myfile.csv&quot;</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
 </div>
 </div>
 </div>
@@ -720,19 +562,19 @@ A description of your changes to the package
 <h1>Partial builds</h1>
 <p>We can also perform partial builds of a subset of files in a package by toggling the <code>enabled</code> key in the config file.</p>
 <p>This can be done with the following API:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">config &lt;-<span class="st"> </span><span class="kw">yml_disable_compile</span>(config,<span class="dt">filenames =</span> <span class="st">&quot;file2.R&quot;</span>)</a>
-<a class="sourceLine" id="cb15-2" title="2"><span class="kw">yml_write</span>(config, <span class="dt">path =</span> path_to_package) <span class="co"># write modified yml to the package.</span></a>
-<a class="sourceLine" id="cb15-3" title="3">configuration<span class="op">:</span></a>
-<a class="sourceLine" id="cb15-4" title="4"><span class="st">  </span>files<span class="op">:</span></a>
-<a class="sourceLine" id="cb15-5" title="5"><span class="st">    </span>file1.Rmd<span class="op">:</span></a>
-<a class="sourceLine" id="cb15-6" title="6"><span class="st">      </span>enabled<span class="op">:</span><span class="st"> </span>yes</a>
-<a class="sourceLine" id="cb15-7" title="7">    file2.R<span class="op">:</span></a>
-<a class="sourceLine" id="cb15-8" title="8"><span class="st">      </span>enabled<span class="op">:</span><span class="st"> </span>no</a>
-<a class="sourceLine" id="cb15-9" title="9">  objects<span class="op">:</span></a>
-<a class="sourceLine" id="cb15-10" title="10"><span class="st">  </span><span class="op">-</span><span class="st"> </span>object1</a>
-<a class="sourceLine" id="cb15-11" title="11">  <span class="op">-</span><span class="st"> </span>object2</a>
-<a class="sourceLine" id="cb15-12" title="12">  render_root<span class="op">:</span></a>
-<a class="sourceLine" id="cb15-13" title="13"><span class="st">    </span>tmp<span class="op">:</span><span class="st"> &#39;350214&#39;</span></a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>config <span class="ot">&lt;-</span> <span class="fu">yml_disable_compile</span>(config,<span class="at">filenames =</span> <span class="st">&quot;file2.R&quot;</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">yml_write</span>(config, <span class="at">path =</span> path_to_package) <span class="co"># write modified yml to the package.</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>configuration<span class="sc">:</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  files<span class="sc">:</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    file1.Rmd<span class="sc">:</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>      enabled<span class="sc">:</span> yes</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    file2.R<span class="sc">:</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>      enabled<span class="sc">:</span> no</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  objects<span class="sc">:</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span> object1</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span> object2</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  render_root<span class="sc">:</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    tmp<span class="sc">:</span> <span class="st">&#39;289541&#39;</span></span></code></pre></div>
 <p>Note that the modified configuration needs to be written back to the package source directory in order for the changes to take effect.</p>
 <p>The consequence of toggling a file to <code>enable: no</code> is that it will be skipped when the package is rebuilt, but the data will still be retained in the package, and the documentation will not be altered.</p>
 <p>This is useful in situations where we have multiple data sets, and want to re-run one script to update a specific data set, but not the other scripts because they may be too time consuming, for example.</p>
@@ -772,7 +614,7 @@ A description of your changes to the package
 </ol></li>
 </ul>
 <p>This will let you version control your data processing code, and provide a mechanism for sharing your package with others.</p>
-<p>For more details on using git and github with R, there is an excellent guide provided by Jenny Bryan: <a href="http://happygitwithr.com/">Happy Git and GitHub for the useR</a> and Hadley Wickham’s <a href="http://r-pkgs.had.co.nz/">book on R packages</a>.</p>
+<p>For more details on using git and github with R, there is an excellent guide provided by Jenny Bryan: <a href="https://happygitwithr.com/">Happy Git and GitHub for the useR</a> and Hadley Wickham’s <a href="https://r-pkgs.org/">book on R packages</a>.</p>
 </div>
 </div>
 <div id="additional-details" class="section level1">
@@ -802,23 +644,28 @@ Authors@R:
     person(given = &quot;First&quot;,
            family = &quot;Last&quot;,
            role = c(&quot;aut&quot;, &quot;cre&quot;),
-           email = &quot;first.last@example.com&quot;)
+           email = &quot;first.last@example.com&quot;,
+           comment = c(ORCID = &quot;YOUR-ORCID-ID&quot;))
 Description: What the package does (one paragraph).
-License: What license it uses
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
 Encoding: UTF-8
 LazyData: true
-DataVersion: 0.1.0
 Roxygen: list(markdown = TRUE)
-Date: 2019-03-30
+RoxygenNote: 7.1.1
+DataVersion: 0.1.0
+Date: 2021-03-16
 Suggests: 
     knitr,
     rmarkdown
-VignetteBuilder: knitr
-RoxygenNote: 6.1.1</code></pre>
+VignetteBuilder: knitr</code></pre>
 </div>
 </div>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

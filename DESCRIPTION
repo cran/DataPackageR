@@ -2,14 +2,20 @@ Package: DataPackageR
 Type: Package
 Title: Construct Reproducible Analytic Data Sets as R Packages
 Authors@R: 
-    c(person(given = "Greg Finak", role=c("aut","cre","cph"), email="gfinak@fredhutch.org"),
+    c(person(given = "Greg Finak", 
+             role=c("aut","cph"),
+             email="greg.finak@gmail.com",
+             comment="Original author and creator of DataPackageR"),
       person(given = "Paul Obrecht", role=c("ctb")),
-      person(given = "Ellis Hughes", role=c("ctb")),
+      person(given = "Ellis Hughes", role=c("ctb","cre"), email = "ehhughes@scharp.org"),
+      person(given = "Jimmy Fulp", role=c("ctb"), email = "wfulp@scharp.org"),
+      person(given = "Marie Vendettuoli", role=c("ctb"), email = "mvendett@scharp.org"),
+      person(given = "Jason Taylor", role=c("ctb")),
       person("Kara", "Woo", role = "rev",
       comment = "Kara reviewed the package for ropensci, see <https://github.com/ropensci/onboarding/issues/230>"),
       person("William", "Landau", role = "rev",
       comment = "William reviewed the package for ropensci, see <https://github.com/ropensci/onboarding/issues/230>"))
-Version: 0.15.7
+Version: 0.15.8
 Description: A framework to help construct R data packages in a 
   reproducible manner. Potentially time consuming processing of 
   raw data sets into analysis ready data sets is done in a reproducible 
@@ -28,22 +34,26 @@ Imports: digest, knitr, utils, rmarkdown, desc, yaml, purrr, roxygen2
         (>= 6.0.1), devtools (>= 1.12.0), assertthat, stringr,
         futile.logger, rprojroot, usethis, crayon
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Encoding: UTF-8
 Suggests: spelling, testthat, covr, data.tree,
-URL: https://github.com/ropensci/DataPackageR
+URL: https://docs.ropensci.org/DataPackageR/ (website)
+        https://github.com/ropensci/DataPackageR/
 BugReports: https://github.com/ropensci/DataPackageR/issues
 SystemRequirements: pandoc (>= 1.12.3) - http://pandoc.org
 Language: en-US
 NeedsCompilation: no
-Packaged: 2019-03-30 17:13:44 UTC; gfinak
-Author: Greg Finak [aut, cre, cph],
+Packaged: 2021-03-17 05:00:46 UTC; ehhughes
+Author: Greg Finak [aut, cph] (Original author and creator of DataPackageR),
   Paul Obrecht [ctb],
-  Ellis Hughes [ctb],
+  Ellis Hughes [ctb, cre],
+  Jimmy Fulp [ctb],
+  Marie Vendettuoli [ctb],
+  Jason Taylor [ctb],
   Kara Woo [rev] (Kara reviewed the package for ropensci, see
     <https://github.com/ropensci/onboarding/issues/230>),
   William Landau [rev] (William reviewed the package for ropensci, see
     <https://github.com/ropensci/onboarding/issues/230>)
-Maintainer: Greg Finak <gfinak@fredhutch.org>
+Maintainer: Ellis Hughes <ehhughes@scharp.org>
 Repository: CRAN
-Date/Publication: 2019-03-30 17:40:03 UTC
+Date/Publication: 2021-03-17 09:50:03 UTC
