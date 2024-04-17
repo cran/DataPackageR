@@ -22,19 +22,31 @@ package_build(
 
 \item{deps}{\code{logical} should we pass data objects into subsequent scripts? Default TRUE}
 
-\item{install}{\code{logical} automatically install and load the package after building. (default TRUE)}
+\item{install}{\code{logical} automatically install and load the package after building. Default FALSE}
 
 \item{...}{additional arguments passed to \code{install.packages} when \code{install=TRUE}.}
 }
+\value{
+Character vector. File path of the built package.
+}
 \description{
 Combines the preprocessing, documentation, and build steps into one.
+}
+\details{
+Note that if \code{package_build} returns an error when rendering an \code{.Rmd}
+internally, but that same \code{.Rmd} can be run successfully manually using \code{rmarkdown::render},
+then the following code facilitates debugging. Set \code{options(error = function(){ sink(); recover()})}
+before running \code{package_build} . This will enable examination of the active function calls at the time of the error,
+with output printed to the console rather than \code{knitr}'s default sink.
+After debugging, evaluate \code{options(error = NULL)} to revert to default error handling.
+See section "22.5.3 RMarkdown" at \url{ https://adv-r.hadley.nz/debugging.html} for more details.
 }
 \examples{
 if(rmarkdown::pandoc_available()){
 f <- tempdir()
 f <- file.path(f,"foo.Rmd")
 con <- file(f)
-writeLines("```{r}\n tbl = table(sample(1:10,1000,replace=TRUE)) \n```\n",con=con)
+writeLines("```{r}\n tbl = data.frame(1:10) \n```\n",con=con)
 close(con)
 pname <- basename(tempfile())
 datapackage_skeleton(name=pname,

@@ -28,6 +28,7 @@
 #' @param r_object_names \code{vector} of quoted r object names , tables, etc. created when the files in \code{code_files} are run.
 #' @param raw_data_dir \code{character} pointing to a raw data directory. Will be moved with all its subdirectories to "inst/extdata"
 #' @param dependencies \code{vector} of \code{character}, paths to R files that will be moved to "data-raw" but not included in the yaml config file. e.g., dependency scripts.
+#' @returns No return value, called for side effects
 #' @note renamed \code{datapackage.skeleton()} to \code{datapackage_skeleton()}.
 #' @importFrom crayon bold green
 #' @export
@@ -39,6 +40,9 @@ datapackage_skeleton <-
              r_object_names = character(),
              raw_data_dir = character(),
              dependencies = character()) {
+    if (! getOption('DataPackageR_verbose', TRUE)){
+      withr::local_options(list(usethis.quiet = TRUE))
+    }
     if (is.null(name)) {
       stop("Must supply a package name", call. = FALSE)
     }
@@ -67,6 +71,7 @@ datapackage_skeleton <-
     description$set("DataVersion" = "0.1.0")
     description$set("Version" = "1.0")
     description$set("Package" = name)
+    description$set_dep("R", "Depends", ">= 3.5.0")
     description$set("Roxygen" = "list(markdown = TRUE)")
     description$write()
     .done(paste0("Added DataVersion string to ", crayon::blue("'DESCRIPTION'")))
@@ -176,7 +181,7 @@ datapackage_skeleton <-
 #' f <- tempdir()
 #' f <- file.path(f,"foo.Rmd")
 #' con <- file(f)
-#' writeLines("```{r}\n tbl = table(sample(1:10,1000,replace=TRUE)) \n```\n",con=con)
+#' writeLines("```{r}\n tbl = data.frame(1:10) \n```\n",con=con)
 #' close(con)
 #' pname <- basename(tempfile())
 #' datapackage_skeleton(name = pname,
@@ -215,5 +220,5 @@ datapackage.skeleton <- function(name = NULL,
 }
 
 .cat_line <- function(...) {
-  cat(..., "\n", sep = "")
+  if (getOption('DataPackageR_verbose', TRUE)) cat(..., "\n", sep = "")
 }

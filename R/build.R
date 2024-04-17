@@ -8,8 +8,9 @@
 #' @param vignettes \code{logical} specify whether to build vignettes. Default FALSE.
 #' @param log log level \code{INFO,WARN,DEBUG,FATAL}
 #' @param deps \code{logical} should we pass data objects into subsequent scripts? Default TRUE
-#' @param install \code{logical} automatically install and load the package after building. (default TRUE)
+#' @param install \code{logical} automatically install and load the package after building. Default FALSE
 #' @param ... additional arguments passed to \code{install.packages} when \code{install=TRUE}.
+#' @returns Character vector. File path of the built package.
 #' @importFrom roxygen2 roxygenise roxygenize
 #' @importFrom devtools build_vignettes build parse_deps reload
 #' @importFrom usethis use_build_ignore use_rstudio proj_set use_directory
@@ -19,13 +20,20 @@
 #' @importFrom yaml read_yaml
 #' @importFrom futile.logger flog.logger flog.trace appender.file flog.debug flog.info flog.warn flog.error flog.fatal flog.appender flog.threshold INFO TRACE appender.console appender.tee
 #' @importFrom knitr knit spin
+#' @details Note that if \code{package_build} returns an error when rendering an \code{.Rmd}
+#' internally, but that same \code{.Rmd} can be run successfully manually using \code{rmarkdown::render},
+#' then the following code facilitates debugging. Set \code{options(error = function(){ sink(); recover()})}
+#' before running \code{package_build} . This will enable examination of the active function calls at the time of the error,
+#' with output printed to the console rather than \code{knitr}'s default sink.
+#' After debugging, evaluate \code{options(error = NULL)} to revert to default error handling.
+#' See section "22.5.3 RMarkdown" at \url{ https://adv-r.hadley.nz/debugging.html} for more details.
 #' @export
 #' @examples
 #' if(rmarkdown::pandoc_available()){
 #' f <- tempdir()
 #' f <- file.path(f,"foo.Rmd")
 #' con <- file(f)
-#' writeLines("```{r}\n tbl = table(sample(1:10,1000,replace=TRUE)) \n```\n",con=con)
+#' writeLines("```{r}\n tbl = data.frame(1:10) \n```\n",con=con)
 #' close(con)
 #' pname <- basename(tempfile())
 #' datapackage_skeleton(name=pname,
@@ -44,7 +52,6 @@ package_build <- function(packageName = NULL,
                           ...) {
   .multilog_setup(LOGFILE = NULL)
   # flog.appender(appender.console())
-  # requireNamespace("futile.logger")
   if (is.null(packageName)) {
     packageName <- "."
     # use normalizePath
@@ -67,17 +74,16 @@ package_build <- function(packageName = NULL,
   }
   # This should always be a proper name of a directory, either current or a
   # subdirectory
-  if (inherits(
-    try(is_r_package$find_file(path = package_path))
-    , "try-error"
-  )) {
-    flog.fatal(paste0(
-      package_path,
-      " is not a valid R package directory beneath ",
-      getwd()
-    ), name = "console")
-    stop("exiting", call. = FALSE)
-  }
+  tryCatch({is_r_package$find_file(path = package_path)},
+           error = function(cond){
+             flog.fatal(paste0(
+               package_path,
+               " is not a valid R package directory beneath ",
+               getwd()
+             ), name = "console")
+             stop("exiting", call. = FALSE)
+           }
+  )
 
   # Return success if we've processed everything
   success <-
@@ -87,18 +93,22 @@ package_build <- function(packageName = NULL,
     .multilog_warn("DataPackageR failed")
   )
   .multilog_trace("Building documentation")
-  roxygen2::roxygenise(package_path,
-    clean = TRUE
-  )
-
+  local({
+    on.exit({
+      if (packageName %in% devtools::package_info('attached')$package){
+        devtools::unload(packageName)
+      }
+    })
+    roxygen2::roxygenise(package_path, clean = TRUE)
+  })
   .multilog_trace("Building package")
   location <- build(package_path,
     path = dirname(package_path),
-    vignettes = vignettes
+    vignettes = vignettes,
+    quiet = ! getOption('DataPackageR_verbose', TRUE)
   )
   # try to install and then reload the package in the current session
   if (install) {
-    devtools::unload(packageName)
     install.packages(location, repos = NULL, type = "source", ...)
   }
   .next_steps()
@@ -106,6 +116,7 @@ package_build <- function(packageName = NULL,
 }
 
 .next_steps <- function() {
+  if (! getOption('DataPackageR_verbose', TRUE)) return(invisible(NULL))
   cat(crayon::green(crayon::bold("Next Steps")), "\n") # nolint
   cat(crayon::white(crayon::yellow(crayon::bold("1. Update your package documentation.")), "\n")) # nolint
   cat(crayon::white("   - Edit the documentation.R file in the package source", crayon::green("data-raw"), "subdirectory and update the roxygen markup."), "\n") # nolint
@@ -123,6 +134,7 @@ package_build <- function(packageName = NULL,
 #' @name keepDataObjects-defunct
 #' @aliases  keepDataObjects
 #' @param ... arguments
+#' @returns Defunct. No return value.
 #' @rdname keepDataObjects-defunct
 #' @export
 keepDataObjects <- function(...) {

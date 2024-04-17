@@ -45,6 +45,9 @@ into R objects.}
 
 \item{environment}{Not used.}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Creates a package skeleton directory structure for use with DataPackageR.
 Adds the DataVersion string to DESCRIPTION, creates the DATADIGEST file, and the data-raw directory.
@@ -58,7 +61,7 @@ if(rmarkdown::pandoc_available()){
 f <- tempdir()
 f <- file.path(f,"foo.Rmd")
 con <- file(f)
-writeLines("```{r}\n tbl = table(sample(1:10,1000,replace=TRUE)) \n```\n",con=con)
+writeLines("```{r}\n tbl = data.frame(1:10) \n```\n",con=con)
 close(con)
 pname <- basename(tempfile())
 datapackage_skeleton(name = pname,

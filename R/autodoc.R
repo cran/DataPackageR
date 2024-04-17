@@ -15,6 +15,7 @@
   }
 
   # create Roxygen documentation for data package
+  on.exit(close(con))
   con <- file(tempfilename, open = "w")
   writeLines(
     c(
@@ -22,7 +23,6 @@
         c(
           pname,
           paste0("A data package for ", pname, "."),
-          "@docType package",
           paste0("@aliases ", pname, "-package"),
           "@title Package Title",
           paste0("@name ", pname),
@@ -40,7 +40,7 @@
           linksrox[2:length(links)]
         )
       ),
-      "NULL\n\n\n"
+      "'_PACKAGE'\n\n\n"
     ), con
   )
 
@@ -91,5 +91,4 @@
       ), con
     )
   }
-  close(con)
 }

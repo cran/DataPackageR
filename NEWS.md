@@ -1,3 +1,23 @@
+# DataPackageR 0.15.9
+
+## Bug fixes
+
+* Fix bug where `.Rprofile` options setting for `DataPackageR_interact` was overwritten upon package load
+* Fix bugs where document() and package_build() left the data package attached
+* Fix unit test inter-dependencies
+* Make package template depend on R >= 3.5.0, suppressing `.rda` serialization warnings upon install
+* Close a file connection, suppressing warnings about orphaned connections
+* Fix broken test that led to archiving on CRAN
+* Fix package documentation method for data packages and DataPackageR itself (r-lib/roxygen2#1491)
+* Fix tests for compatibility with usethis >1.5.2
+
+## Minor improvements
+
+* Various maintenance tweaks
+* Documentation improvements
+* Update maintainer and contact info
+* New global option `DataPackageR_verbose` to suppress console output, e.g. during unit testing
+
 # DataPackageR 0.15.8
 * Fix to datapackager_object_read that was causing a test to break. `get` needs to have `inherits=FALSE`. 
 * Other fixes for `usethis` 1.6.0
@@ -41,7 +61,7 @@
 # DataPackageR 0.15.3
 * conditional tests when pandoc is missing (ropensci/DataPackager/issues/46)
 * add use_data_object and use_processing_script (ropensci/DataPackager/issues/44)
-* allow datapacakge_skeleton to be called without files or data objects for interactive construction. (ropensci/DataPackager/issues/44)
+* allow datapackage_skeleton to be called without files or data objects for interactive construction. (ropensci/DataPackager/issues/44)
 
 # DataPackageR 0.15.2
 * Add  pandoc to SystemRequirements (ropensci/DataPackager/issues/46)
@@ -61,7 +81,7 @@
 
 - Moving towards ropensci compliance
 - NEWS.md updated with description of changes to data sets when version is bumped (or new package is created).
-- Output of "next steps" for user when pakcage is built
+- Output of "next steps" for user when package is built
 - New `document()` function to rebuild docs from `documentation.R` in `data-raw` without rebuilding the whole package.
 - Improved package test.
 - R scripts processed properly into vignettes.

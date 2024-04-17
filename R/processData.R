@@ -1,89 +1,3 @@
-#' DataPackageR
-#'
-#' A framework to automate the processing, tidying and packaging of raw data into analysis-ready
-#' data sets as R packages.
-#'
-#' DataPackageR will automate running of data processing code,
-#' storing tidied data sets in an R package, producing
-#' data documentation stubs, tracking data object finger prints (md5 hash)
-#' and tracking and incrementing a "DataVersion" string
-#' in the DESCRIPTION file of the package when raw data or data
-#' objects change.
-#' Code to perform the data processing is passed to DataPackageR by the user.
-#' The user also specifies the names of the tidy data objects to be stored,
-#' documented and tracked in the final package. Raw data should be read from
-#' "inst/extdata" but large raw data files can be read from sources external
-#' to the package source tree.
-#'
-#' Configuration is controlled via the config.yml file created at the package root.
-#' Its properties include a list of R and Rmd files that are to be rendered / sourced and
-#' which read data and do the actual processing.
-#' It also includes a list of r object names created by those files. These objects
-#' are stored in the final package and accessible via the \code{data()} API.
-#' The documentation for these objects is accessible via "?object-name", and md5
-#' fingerprints of these objects are created and tracked.
-#'
-#' The Rmd and R files used to process the objects are transformed into vignettes
-#' accessible in the final package so that the processing is fully documented.
-#'
-#' A DATADIGEST file in the package source keeps track of the data object fingerprints.
-#' A DataVersion string is added to the package DESCRIPTION file and updated when these
-#' objects are updated or changed on subsequent builds.
-#'
-#' Once the package is built and installed, the data objects created in the package are accessible via
-#' the \code{data()} API, and
-#' Calling \code{datapackage_skeleton()} and passing in R / Rmd file names, and r object names
-#' constructs a skeleton data package source tree and an associated \code{config.yml} file.
-#'
-#' Calling \code{build_package()} sets the build process in motion.
-#' @examples
-#' # A simple Rmd file that creates one data object
-#' # named "tbl".
-#' if(rmarkdown::pandoc_available()){
-#' f <- tempdir()
-#' f <- file.path(f,"foo.Rmd")
-#' con <- file(f)
-#' writeLines("```{r}\n tbl = table(sample(1:10,1000,replace=TRUE)) \n```\n",con=con)
-#' close(con)
-#'
-#' # construct a data package skeleton named "MyDataPackage" and pass
-#' # in the Rmd file name with full path, and the name of the object(s) it
-#' # creates.
-#'
-#' pname <- basename(tempfile())
-#' datapackage_skeleton(name=pname,
-#'    path=tempdir(),
-#'    force = TRUE,
-#'    r_object_names = "tbl",
-#'    code_files = f)
-#'
-#' # call package_build to run the "foo.Rmd" processing and
-#' # build a data package.
-#' package_build(file.path(tempdir(), pname), install = FALSE)
-#'
-#' # "install" the data package
-#' devtools::load_all(file.path(tempdir(), pname))
-#'
-#' # read the data version
-#' data_version(pname)
-#'
-#' # list the data sets in the package.
-#' data(package = pname)
-#'
-#' # The data objects are in the package source under "/data"
-#' list.files(pattern="rda", path = file.path(tempdir(),pname,"data"), full = TRUE)
-#'
-#' # The documentation that needs to be edited is in "/R"
-#' list.files(pattern="R", path = file.path(tempdir(), pname,"R"), full = TRUE)
-#' readLines(list.files(pattern="R", path = file.path(tempdir(),pname,"R"), full = TRUE))
-#' # view the documentation with
-#' ?tbl
-#' }
-#' @docType package
-#' @name DataPackageR-package
-NULL
-
-
 .validate_render_root <- function(x) {
   # catch an error if it doesn't exist
   render_root <-
@@ -117,20 +31,22 @@ NULL
 #' @importFrom utils getSrcref modifyList
 #' @importFrom usethis proj_set proj_get
 DataPackageR <- function(arg = NULL, deps = TRUE) {
-  # requireNamespace("futile.logger")
+  if (! getOption('DataPackageR_verbose', TRUE)){
+    withr::local_options(list(usethis.quiet = TRUE))
+  }
   pkg_dir <- arg
   pkg_dir <- normalizePath(pkg_dir, winslash = "/")
-  cat("\n")
+  if (getOption('DataPackageR_verbose', TRUE)) cat("\n")
   usethis::proj_set(path = pkg_dir)
   raw_data_dir <- "data-raw"
   target <- normalizePath(file.path(pkg_dir, raw_data_dir), winslash = "/")
   raw_data_dir <- target
-  
+
   #set the option that DataPackageR is building the package. On exit ensures when it leaves, it will set it back to false
   options("DataPackageR_packagebuilding" = TRUE)
   on.exit(options("DataPackageR_packagebuilding" = FALSE))
-  
-  
+
+
 
   # validate that render_root exists.
   # if it's an old temp dir, what then?
@@ -262,8 +178,20 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
     object_tally <- 0
     already_built <- NULL
     building <- NULL
+    r_dir <- normalizePath(file.path(pkg_dir, "R" ), winslash = "/")
+    r_dir_files <- list.files( r_dir )
+    r_dir_files <- r_dir_files[ !grepl( pkg_description$Package,
+                                        r_dir_files ) ]
     for (i in seq_along(r_files)) {
       dataenv <- new.env(hash = TRUE, parent = .GlobalEnv)
+      for( j in seq_along( r_dir_files ) ){
+        curr_path <- normalizePath(file.path(pkg_dir,
+                                             "R",
+                                             r_dir_files[j] ),
+                                   winslash = "/")
+        source( curr_path,
+                local = dataenv )
+      }
       # assign ENVS into dataenv.
       # provide functions in the package to read from it (if deps = TRUE)
       if (deps) {
@@ -360,7 +288,8 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
           assign(o, get(o, dataenv), ENVS)
           # write the object to render_root
           o_instance <- get(o,dataenv)
-          saveRDS(o_instance, file = paste0(file.path(render_root,o),".rds"))
+          saveRDS(o_instance, file = paste0(file.path(render_root,o),".rds"),
+                  version = 2)
         }
       }
     }
@@ -401,7 +330,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
         )
         #TODO what objects have changed?
         changed_objects <- .qualify_changes(new_data_digest,old_data_digest)
-        
+
         .update_news_md(updated_version$new_data_digest[["DataVersion"]],
           interact = getOption("DataPackageR_interact", interactive())
         )
@@ -453,7 +382,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
           interact = getOption("DataPackageR_interact", interactive())
         )
         .update_news_changed_objects(changed_objects)
-        
+
         pkg_description <- updated_version$pkg_description
         new_data_digest <- updated_version$new_data_digest
         can_write <- TRUE
@@ -528,16 +457,19 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
           new = missing_doc
         )
         file.info("Writing merged docs.")
-        docfile <- file(
-          file.path(
-            target,
-            paste0("documentation", ".R")
-          ),
-          open = "w"
-        )
-        for (i in seq_along(doc_parsed)) {
-          writeLines(text = doc_parsed[[i]], con = docfile)
-        }
+        local({
+          on.exit(close(docfile))
+          docfile <- file(
+            file.path(
+              target,
+              paste0("documentation", ".R")
+            ),
+            open = "w"
+          )
+          for (i in seq_along(doc_parsed)) {
+            writeLines(text = doc_parsed[[i]], con = docfile)
+          }
+        })
       }
       # Partial build if enabled=FALSE for
       # any file We've disabled an object but don't
@@ -575,7 +507,6 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
 
 
 .ppfiles_mkvignettes <- function(dir = NULL) {
-  cat("\n")
   if (proj_get() != dir) {
     usethis::proj_set(dir) #nocov
   }
@@ -601,7 +532,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
       full.names = TRUE,
       recursive = FALSE
     )
-  pdffiles_for_vignettes <- 
+  pdffiles_for_vignettes <-
     list.files(
       path = file.path(dir, "inst/extdata/Logfiles"),
       pattern = "pdf$",
@@ -621,7 +552,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
       )
     }
   )
-  
+
   purrr::map(
     pdffiles_for_vignettes,
     function(x) {
@@ -789,6 +720,7 @@ project_data_path <- function(file = NULL) {
 #' @param path \code{character} the path to the data package source root.
 #' @param install \code{logical} install and reload the package. (default TRUE)
 #' @param ... additional arguments to \code{install}
+#' @returns Called for side effects. Returns TRUE on successful exit.
 #' @export
 #' @examples
 #' # A simple Rmd file that creates one data object
@@ -797,9 +729,9 @@ project_data_path <- function(file = NULL) {
 #' f <- tempdir()
 #' f <- file.path(f,"foo.Rmd")
 #' con <- file(f)
-#' writeLines("```{r}\n tbl = table(sample(1:10,100,replace=TRUE)) \n```\n",con=con)
+#' writeLines("```{r}\n tbl = data.frame(1:10) \n```\n",con=con)
 #' close(con)
-#'
+#' \donttest{
 #' # construct a data package skeleton named "MyDataPackage" and pass
 #' # in the Rmd file name with full path, and the name of the object(s) it
 #' # creates.
@@ -816,8 +748,9 @@ project_data_path <- function(file = NULL) {
 #' package_build(file.path(tempdir(), pname), install = FALSE)
 #' document(path = file.path(tempdir(), pname), install=FALSE)
 #' }
+#' }
 document <- function(path = ".", install = TRUE, ...) {
-  cat("\n")
+  if (getOption('DataPackageR_verbose', TRUE)) cat("\n")
   usethis::proj_set(path = path)
   path <- usethis::proj_get()
   assert_that(file.exists(file.path(path, "data-raw", "documentation.R")))
@@ -829,14 +762,20 @@ document <- function(path = ".", install = TRUE, ...) {
     overwrite = TRUE
   )
   .multilog_trace("Rebuilding data package documentation.")
-  devtools::document(pkg = path)
+  local({
+    on.exit({
+      if (basename(path) %in% devtools::package_info('attached')$package){
+        devtools::unload(basename(path))
+      }
+    })
+    devtools::document(pkg = path)
+  })
   location <- devtools::build(
     pkg = path, path = dirname(path),
     vignettes = FALSE, quiet = TRUE
   )
   # try to install and then reload the package in the current session
   if (install) {
-    devtools::unload(basename(path))
     install.packages(location, repos = NULL, type = "source", ...)
   }
   return(TRUE)
