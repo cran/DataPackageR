@@ -21,7 +21,7 @@ DataPackageR::datapackage_skeleton(name = "mtcars20",
                                    force = TRUE,
                                    code_files = processing_code,
                                    r_object_names = "cars_over_20",
-                                   path = tempdir() 
+                                   path = tempdir()
                                    #dependencies argument is empty
                                    #raw_data_dir argument is empty.
                                    )
@@ -45,13 +45,7 @@ as.Node(df)
 cat(yaml::as.yaml(yaml::yaml.load_file(file.path(tempdir(),"mtcars20","datapackager.yml"))))
 
 ## ----eval = rmarkdown::pandoc_available()-------------------------------------
-dir.create(file.path(tempdir(),"lib"))
-
-DataPackageR:::package_build(
-  file.path(tempdir(),"mtcars20"),
-  install = TRUE,
-  lib = file.path(tempdir(),"lib")
-)
+DataPackageR::package_build(file.path(tempdir(),"mtcars20"))
 
 ## ----echo=FALSE, eval = rmarkdown::pandoc_available()-------------------------
 df <- data.frame(
@@ -68,15 +62,18 @@ df <- data.frame(
 as.Node(df)
 
 ## ----rebuild_docs, eval = rmarkdown::pandoc_available()-----------------------
-dir.create(file.path(tempdir(),"lib")) # a temporary library directory
-document(file.path(tempdir(),"mtcars20"), lib = file.path(tempdir(),"lib"))
+DataPackageR::document(file.path(tempdir(),"mtcars20"))
 
 ## ----eval = rmarkdown::pandoc_available()-------------------------------------
 # Create a temporary library to install into.
 dir.create(file.path(tempdir(),"lib"))
 
-# Let's use the package we just created.
-install.packages(file.path(tempdir(),"mtcars20_1.0.tar.gz"), type = "source", repos = NULL, lib = file.path(tempdir(),"lib"))
+# Let's install the package we just created.
+# This can also be done with with `install = TRUE` in package_build() or document().
+
+install.packages(file.path(tempdir(),"mtcars20_1.0.tar.gz"),
+                 type = "source", repos = NULL,
+                 lib = file.path(tempdir(),"lib"))
 lns <- loadNamespace
 if (!"package:mtcars20"%in%search())
   attachNamespace(lns('mtcars20',lib.loc = file.path(tempdir(),"lib"))) #use library() in your code
@@ -84,7 +81,7 @@ data("cars_over_20") # load the data
 
 cars_over_20 # now we can use it.
 ?cars_over_20 # See the documentation you wrote in data-raw/documentation.R.
-  
+
 vignettes <- vignette(package = "mtcars20", lib.loc = file.path(tempdir(),"lib"))
 vignettes$results
 

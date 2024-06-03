@@ -54,12 +54,8 @@
   newsfile <- file.path(usethis::proj_get(), "NEWS.md")
   if (!file.exists(newsfile)) {
     .multilog_trace("NEWS.md file not found, creating!")
-    con <- file(newsfile, open = "w+", blocking = FALSE)
-  } else {
-    .multilog_trace("NEWS.md file found, updating!")
-    con <- file(newsfile, open = "r+", blocking = FALSE)
+    file.create(newsfile)
   }
-  close(con)
   return(newsfile)
 }
 
@@ -71,8 +67,8 @@
   # header_2 <- grep("DataVersion", news_file_data)[2]
   ul_1 <- grep("=====", news_file_data)[1]
   # ul_2 <- grep("=====", news_file_data)[2]
-  assert_that(header_1 == ul_1 - 1)
-  # assert_that(header_2 == ul_2 - 1)
+  stopifnot(header_1 == ul_1 - 1)
+  # stopifnot(header_2 == ul_2 - 1)
   header <- news_file_data[header_1:ul_1]
   news_file_data <- news_file_data[-c(header_1:ul_1)]
   #write header
@@ -89,7 +85,7 @@
   .write_changes <- function(string, news_con, what = NULL) {
     if (length(string) != 0) {
       if (getOption('DataPackageR_verbose', TRUE)){
-        cat(crayon::cyan(paste0("* ",what,": ",string,"\n")))
+        cat(crayon::cyan(paste0("* ",what,": ",string,"\n")), sep = "")
       }
        writeLines(text = paste0("* ",what,": ", string),
                   con = news_con,

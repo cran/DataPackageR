@@ -10,11 +10,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<meta name="author" content="Greg Finak gfinak@fredhutch.org" />
 
-<meta name="date" content="2024-04-16" />
+<meta name="date" content="2024-06-02" />
 
-<title>YAML Configuration Details.</title>
+<title>YAML Configuration Details</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -51,7 +50,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -338,9 +337,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">YAML Configuration Details.</h1>
-<h4 class="author">Greg Finak <a href="mailto:gfinak@fredhutch.org" class="email">gfinak@fredhutch.org</a></h4>
-<h4 class="date">2024-04-16</h4>
+<h1 class="title toc-ignore">YAML Configuration Details</h1>
+<h4 class="date">2024-06-02</h4>
 
 
 <div id="TOC">
@@ -378,7 +376,7 @@ file is shown below:</p>
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: &#39;486574&#39;</code></pre>
+    tmp: &#39;109428&#39;</code></pre>
 </div>
 <div id="yaml-config-file-properties." class="section level2">
 <h2>YAML config file properties.</h2>
@@ -403,7 +401,7 @@ the file should be rendered during the build, or whether it should be
 skipped.</p>
 <p>This is useful for ‘turning off’ long running processing tasks if
 they have not changed. Disabling processing of a file will not overwrite
-existing documentation or data objecs created during previous
+existing documentation or data objects created during previous
 builds.</p>
 <ul>
 <li><code>objects:</code></li>
@@ -436,8 +434,8 @@ modify, and write the yaml config file.</p>
 <div id="example" class="section level5">
 <h5>Example</h5>
 <p>The YAML config shown above was created by:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Note this is done by the datapackage_skeleton. </span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co"># The user does not usually need to call </span></span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Note this is done by the datapackage_skeleton.</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co"># The user does not usually need to call</span></span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co"># construct_yml_config()</span></span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>yml <span class="ot">&lt;-</span> DataPackageR<span class="sc">::</span><span class="fu">construct_yml_config</span>(</span>
 <span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">code =</span> <span class="st">&quot;subsetCars.Rmd&quot;</span>,</span>
@@ -496,7 +494,7 @@ subsetCars.Rmd</code></pre>
       enabled: no
   objects: cars_over_20
   render_root:
-    tmp: &#39;264759&#39;</code></pre>
+    tmp: &#39;206948&#39;</code></pre>
 </div>
 </div>
 <div id="yml_enable_compile" class="section level4">
@@ -515,7 +513,7 @@ subsetCars.Rmd</code></pre>
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: &#39;264759&#39;</code></pre>
+    tmp: &#39;206948&#39;</code></pre>
 </div>
 </div>
 <div id="yml_add_files" class="section level4">
@@ -535,7 +533,7 @@ subsetCars.Rmd</code></pre>
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: &#39;264759&#39;</code></pre>
+    tmp: &#39;206948&#39;</code></pre>
 </div>
 </div>
 <div id="yml_add_objects" class="section level4">
@@ -557,7 +555,7 @@ subsetCars.Rmd</code></pre>
   - cars_over_20
   - another_object
   render_root:
-    tmp: &#39;264759&#39;</code></pre>
+    tmp: &#39;206948&#39;</code></pre>
 </div>
 </div>
 <div id="yml_remove_files" class="section level4">
@@ -577,7 +575,7 @@ subsetCars.Rmd</code></pre>
   - cars_over_20
   - another_object
   render_root:
-    tmp: &#39;264759&#39;</code></pre>
+    tmp: &#39;206948&#39;</code></pre>
 </div>
 </div>
 <div id="yml_remove_objects" class="section level4">
@@ -595,7 +593,7 @@ subsetCars.Rmd</code></pre>
       enabled: yes
   objects: cars_over_20
   render_root:
-    tmp: &#39;264759&#39;</code></pre>
+    tmp: &#39;206948&#39;</code></pre>
 </div>
 </div>
 <div id="yml_write" class="section level4">

@@ -2,6 +2,7 @@
 % Please edit documentation in R/DataPackageR-package.R
 \docType{package}
 \name{DataPackageR-package}
+\alias{DataPackageR}
 \alias{DataPackageR-package}
 \title{DataPackageR}
 \description{
@@ -21,7 +22,7 @@ documented and tracked in the final package. Raw data should be read from
 "inst/extdata" but large raw data files can be read from sources external
 to the package source tree.
 
-Configuration is controlled via the config.yml file created at the package root.
+Configuration is controlled via the datapackager.yml file created at the package root.
 Its properties include a list of R and Rmd files that are to be rendered / sourced and
 which read data and do the actual processing.
 It also includes a list of r object names created by those files. These objects
@@ -39,7 +40,7 @@ objects are updated or changed on subsequent builds.
 Once the package is built and installed, the data objects created in the package are accessible via
 the \code{data()} API, and
 Calling \code{datapackage_skeleton()} and passing in R / Rmd file names, and r object names
-constructs a skeleton data package source tree and an associated \code{config.yml} file.
+constructs a skeleton data package source tree and an associated \code{datapackager.yml} file.
 
 Calling \code{package_build()} sets the build process in motion.
 }
@@ -69,7 +70,7 @@ datapackage_skeleton(name=pname,
 package_build(file.path(tempdir(), pname), install = FALSE)
 
 # "install" the data package
-devtools::load_all(file.path(tempdir(), pname))
+pkgload::load_all(file.path(tempdir(), pname))
 
 # read the data version
 data_version(pname)
@@ -90,14 +91,14 @@ readLines(list.files(pattern="R", path = file.path(tempdir(),pname,"R"), full = 
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/ropensci/DataPackageR/}
+  \item \url{https://github.com/ropensci/DataPackageR}
   \item \url{https://docs.ropensci.org/DataPackageR/}
   \item Report bugs at \url{https://github.com/ropensci/DataPackageR/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Dave Slager \email{dslager@scharp.org} (\href{https://orcid.org/0000-0003-2525-2039}{ORCID}) [contributor]
+\strong{Maintainer}: Dave Slager \email{dslager@fredhutch.org} (\href{https://orcid.org/0000-0003-2525-2039}{ORCID}) [contributor]
 
 Authors:
 \itemize{
@@ -111,8 +112,8 @@ Other contributors:
   \item Jimmy Fulp \email{williamjfulp@gmail.com} [contributor]
   \item Marie Vendettuoli (\href{https://orcid.org/0000-0001-9321-1410}{ORCID}) [contributor]
   \item Jason Taylor \email{jmtaylor@fredhutch.org} [contributor]
-  \item Kara Woo (Kara reviewed the package for ropensci, see <https://github.com/ropensci/onboarding/issues/230>) [reviewer]
-  \item William Landau (William reviewed the package for ropensci, see <https://github.com/ropensci/onboarding/issues/230>) [reviewer]
+  \item Kara Woo (Kara reviewed the package for rOpenSci, see <https://github.com/ropensci/onboarding/issues/230>) [reviewer]
+  \item William Landau (William reviewed the package for rOpenSci, see <https://github.com/ropensci/onboarding/issues/230>) [reviewer]
 }
 
 }

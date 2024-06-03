@@ -7,8 +7,8 @@ yml <- DataPackageR::construct_yml_config(code = "subsetCars.Rmd", data = "cars_
 cat(yaml::as.yaml(yml))
 
 ## ----eval = rmarkdown::pandoc_available()-------------------------------------
-# Note this is done by the datapackage_skeleton. 
-# The user does not usually need to call 
+# Note this is done by the datapackage_skeleton.
+# The user does not usually need to call
 # construct_yml_config()
 yml <- DataPackageR::construct_yml_config(
   code = "subsetCars.Rmd",

@@ -15,7 +15,7 @@
 #' "inst/extdata" but large raw data files can be read from sources external
 #' to the package source tree.
 #'
-#' Configuration is controlled via the config.yml file created at the package root.
+#' Configuration is controlled via the datapackager.yml file created at the package root.
 #' Its properties include a list of R and Rmd files that are to be rendered / sourced and
 #' which read data and do the actual processing.
 #' It also includes a list of r object names created by those files. These objects
@@ -33,7 +33,7 @@
 #' Once the package is built and installed, the data objects created in the package are accessible via
 #' the \code{data()} API, and
 #' Calling \code{datapackage_skeleton()} and passing in R / Rmd file names, and r object names
-#' constructs a skeleton data package source tree and an associated \code{config.yml} file.
+#' constructs a skeleton data package source tree and an associated \code{datapackager.yml} file.
 #'
 #' Calling \code{package_build()} sets the build process in motion.
 #' @examples
@@ -62,7 +62,7 @@
 #' package_build(file.path(tempdir(), pname), install = FALSE)
 #'
 #' # "install" the data package
-#' devtools::load_all(file.path(tempdir(), pname))
+#' pkgload::load_all(file.path(tempdir(), pname))
 #'
 #' # read the data version
 #' data_version(pname)
@@ -105,14 +105,15 @@ NULL
 #' - \code{DataPackageR_interact}: Upon package load, this defaults to the value of
 #'   \code{interactive()}, unless the option has been previously set (e.g., in
 #'   \code{.Rprofile}). TRUE prompts user interactively for a NEWS update on
-#'   \code{package_build()}. See the example above and the [rOpenSci blog
-#'   post](https://ropensci.org/blog/2018/09/18/datapackager/) for more details
-#'   on how to set this to FALSE, which will never prompt user for a NEWS
-#'   update. FALSE is also the setting used for DataPackageR's internal tests.
+#'   \code{package_build()}. See the example above and the
+#'   \href{https://ropensci.org/blog/2018/09/18/datapackager/}{rOpenSci blog
+#'   post} for more details on how to set this to FALSE, which will never prompt
+#'   user for a NEWS update. FALSE is also the setting used for DataPackageR
+#'   internal package tests.
 #'
 #' - \code{DataPackageR_verbose}: Default upon package load is TRUE. FALSE suppresses
-#'   all console output and is currently only used for DataPackageR's automated
-#'   unit tests.
+#'   all console output and is currently only used for automated
+#'   unit tests of the DataPackageR package.
 #'
 #' - \code{DataPackageR_packagebuilding}: Default upon package load is FALSE. This
 #'   option is used internally for package operations and changing it is not

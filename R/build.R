@@ -11,12 +11,9 @@
 #' @param install \code{logical} automatically install and load the package after building. Default FALSE
 #' @param ... additional arguments passed to \code{install.packages} when \code{install=TRUE}.
 #' @returns Character vector. File path of the built package.
-#' @importFrom roxygen2 roxygenise roxygenize
-#' @importFrom devtools build_vignettes build parse_deps reload
 #' @importFrom usethis use_build_ignore use_rstudio proj_set use_directory
 #' @importFrom rprojroot is_r_package
 #' @importFrom rmarkdown pandoc_available
-#' @importFrom utils install.packages
 #' @importFrom yaml read_yaml
 #' @importFrom futile.logger flog.logger flog.trace appender.file flog.debug flog.info flog.warn flog.error flog.fatal flog.appender flog.threshold INFO TRACE appender.console appender.tee
 #' @importFrom knitr knit spin
@@ -85,6 +82,9 @@ package_build <- function(packageName = NULL,
            }
   )
 
+  # Check that directory name matches package name
+  validate_pkg_name(package_path)
+
   # Return success if we've processed everything
   success <-
     DataPackageR(arg = package_path, deps = deps)
@@ -95,21 +95,21 @@ package_build <- function(packageName = NULL,
   .multilog_trace("Building documentation")
   local({
     on.exit({
-      if (packageName %in% devtools::package_info('attached')$package){
-        devtools::unload(packageName)
+      if (packageName %in% names(utils::sessionInfo()$otherPkgs)){
+        pkgload::unload(packageName)
       }
     })
-    roxygen2::roxygenise(package_path, clean = TRUE)
+    roxygen2::roxygenize(package_path, clean = TRUE)
   })
   .multilog_trace("Building package")
-  location <- build(package_path,
-    path = dirname(package_path),
+  location <- pkgbuild::build(path = package_path,
+    dest_path = dirname(package_path),
     vignettes = vignettes,
     quiet = ! getOption('DataPackageR_verbose', TRUE)
   )
   # try to install and then reload the package in the current session
   if (install) {
-    install.packages(location, repos = NULL, type = "source", ...)
+    utils::install.packages(location, repos = NULL, type = "source", ...)
   }
   .next_steps()
   return(location)
@@ -129,14 +129,23 @@ package_build <- function(packageName = NULL,
   cat(crayon::white("   - Add the github repository as a remote of your local package repository."), "\n") # nolint
   cat(crayon::white("   - ", crayon::red("git push"), " your local repository to gitub."), "\n") # nolint
 }
-#' These functions are no longer available.
+
+#' Check that pkg name inferred from pkg path is same as pkg name in DESCRIPTION
 #'
-#' @name keepDataObjects-defunct
-#' @aliases  keepDataObjects
-#' @param ... arguments
-#' @returns Defunct. No return value.
-#' @rdname keepDataObjects-defunct
-#' @export
-keepDataObjects <- function(...) {
-  .Defunct(msg = "keepDataObjects is defunct as of version 0.12.1 of DataPackageR. \nUse the config.yml file to control packaging.") # nolint
+#' @param package_path Package path
+#'
+#' @returns Package name (character) if validated
+#' @noRd
+validate_pkg_name <- function(package_path){
+  desc_pkg_name <- desc::desc(
+    file = file.path(package_path, 'DESCRIPTION')
+  )$get("Package")
+  path_pkg_name <- basename(package_path)
+  if (desc_pkg_name != path_pkg_name){
+    err_msg <- paste("Data package name in DESCRIPTION does not match",
+                     "name of the data package directory")
+    flog.fatal(err_msg, name = "console")
+    stop(err_msg, call. = FALSE)
+  }
+  desc_pkg_name
 }

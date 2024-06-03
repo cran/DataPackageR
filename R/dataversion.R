@@ -9,8 +9,6 @@
 #' @seealso \code{\link[utils]{packageVersion}}
 #' @rdname data_version
 #' @returns Object of class 'package_version' and 'numeric_version' specifying the DataVersion of the package
-#' @note \code{dataVersion()} has been renamed to \code{data_version()}
-#' @importFrom utils capture.output file_test package.skeleton packageDescription
 #' @export
 #' @examples
 #' if(rmarkdown::pandoc_available()){
@@ -28,7 +26,7 @@
 #'
 #'    package_build(file.path(tempdir(),pname), install = FALSE)
 #'
-#'    devtools::load_all(file.path(tempdir(),pname))
+#'    pkgload::load_all(file.path(tempdir(),pname))
 #'    data_version(pname)
 #' }
 data_version <- function(pkg, lib.loc = NULL) {
@@ -51,16 +49,10 @@ data_version <- function(pkg, lib.loc = NULL) {
   }
 }
 
-#' @rdname data_version
-#' @export
-dataVersion <- function(pkg, lib.loc = NULL) {
-  warning("Please use data_version() instead of dataVersion().")
-  data_version(pkg = pkg, lib.loc = lib.loc)
-}
-
 .increment_data_version <-
-  function(pkg_description, new_data_digest, which = "patch") {
-    if (!which %in% c("major", "minor", "patch")) {
+  function(pkg_desc, new_data_digest, which = "patch") {
+    which_options <- c("major", "minor", "patch")
+    if (!which %in% which_options) {
       stop(
         paste0(
           "version component to increment",
@@ -70,15 +62,16 @@ dataVersion <- function(pkg, lib.loc = NULL) {
         )
       )
     }
-    verstring <-
-      strsplit(pkg_description[["DataVersion"]], "\\.")[[1]]
-    names(verstring) <- c("major", "minor", "patch")
-    verstring[which] <-
-      as.character(as.numeric(verstring[which]) + 1)
-    verstring <- paste(verstring, collapse = ".")
-    pkg_description[["DataVersion"]] <- verstring
+    verstring <- validate_DataVersion(pkg_desc$get('DataVersion'))
+    # convert back into package_version after validation
+    # to be able to use base R subsetting facilities
+    verstring <- as.package_version(verstring)
+    m <- match(which, which_options)
+    verstring[1, m] <- as.integer(verstring[1, m]) + 1L
+    verstring <- validate_DataVersion(verstring)
+    pkg_desc$set('DataVersion', verstring)
     new_data_digest[["DataVersion"]] <- verstring
-    list(pkg_description = pkg_description, new_data_digest = new_data_digest)
+    list(pkg_description = pkg_desc, new_data_digest = new_data_digest)
   }
 
 #' Assert that a data version in a data package matches an expectation.
@@ -107,7 +100,7 @@ dataVersion <- function(pkg, lib.loc = NULL) {
 #'    code_files = f)
 #' package_build(file.path(tempdir(),pname), install = FALSE)
 #'
-#' devtools::load_all(file.path(tempdir(),pname))
+#' pkgload::load_all(file.path(tempdir(),pname))
 #'
 #' assert_data_version(data_package_name = pname,version_string = "0.1.0",acceptable = "equal")
 #' }

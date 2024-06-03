@@ -19,17 +19,23 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![DOI](https://zenodo.org/badge/29267435.svg)](https://doi.org/10.5281/zenodo.1292095)
 <!-- badges: end -->
 
-- [yaml configuration
-  guide](https://docs.ropensci.org/DataPackageR/articles/YAML_Configuration_Details.html)
-- [a more detailed technical
-  vignette](https://docs.ropensci.org/DataPackageR/articles/Using_DataPackageR.html)
+## Installation
 
-> **Important Note**: [datapack](https://github.com/ropensci/datapack)
-> is a *different package* that is used to “create, send and load data
-> from common repositories such as DataONE into the R environment”.
+You can install the latest
+[CRAN](https://cran.r-project.org/package=DataPackageR) release of
+DataPackageR with:
 
-> **This package** is for processing raw data into tidy data sets and
-> bundling them into R packages.
+``` r
+install.packages("DataPackageR")
+```
+
+You can install the latest development version of DataPackageR from
+[GitHub](https://github.com/ropensci/DataPackageR) with:
+
+``` r
+library(remotes)
+remotes::install_github("ropensci/DataPackageR")
+```
 
 ## What problems does DataPackageR tackle?
 
@@ -58,7 +64,7 @@ purpose is to contain, access, and / or document data sets.
 
 - **Collaboration.**
 
-  A data set packaged in R is easy to distribute and share amongst
+  A data set packaged in R is easy to distribute and share among
   collaborators, and is easy to install and use. All the hard work
   you’ve put into documenting and standardizing the tidy data set comes
   right along with the data package.
@@ -78,13 +84,13 @@ purpose is to contain, access, and / or document data sets.
   format. Packaging and sharing the small, tidied data saves the users
   computing time and time spent waiting for downloads.
 
-## Challenges.
+## Challenges
 
 - **Package size limits.**
 
   R packages have a 10MB size limit, at least on
   [CRAN](https://cran.r-project.org/web/packages/policies.html).
-  BioConductor
+  Bioconductor
   [ExperimentHub](http://contributions.bioconductor.org/data.html#data)
   may be able to support larger data packages.
 
@@ -138,7 +144,206 @@ DataPackageR provides a number of benefits when packaging your data.
   If the data changes and the package is rebuilt, the data version is
   automatically updated.
 
+## Blog Post - building packages interactively.
+
+See this [rOpenSci blog
+post](https://ropensci.org/blog/2018/09/18/datapackager/) on how to
+build data packages interactively using DataPackageR. This uses several
+new interfaces: `use_data_object()`, `use_processing_script()` and
+`use_raw_dataset()` to build up a data package, rather than assuming the
+user has all the code and data ready to go for `datapackage_skeleton()`.
+
+## Example
+
+``` r
+library(DataPackageR)
+
+# Let's reproducibly package up
+# the cars in the mtcars dataset
+# with speed > 20.
+# Our dataset will be called cars_over_20.
+# There are three steps:
+
+# 1. Get the code file that turns the raw data
+# into our packaged and processed analysis-ready dataset.
+# This is in a file called subsetCars.Rmd located in exdata/tests of the DataPackageR package.
+# For your own projects you would write your own Rmd processing file.
+processing_code <- system.file(
+  "extdata", "tests", "subsetCars.Rmd", package = "DataPackageR"
+)
+
+# 2. Create the package framework.
+# We pass in the Rmd file in the `processing_code` variable and the names of the data objects it creates (called "cars_over_20")
+# The new package is called "mtcars20"
+datapackage_skeleton(
+  "mtcars20", force = TRUE,
+  code_files = processing_code,
+  r_object_names = "cars_over_20",
+  path = tempdir())
+#> ✔ Creating '/tmp/RtmpU0javb/mtcars20/'
+#> ✔ Setting active project to '/tmp/RtmpU0javb/mtcars20'
+#> ✔ Creating 'R/'
+#> ✔ Writing 'DESCRIPTION'
+#> Package: mtcars20
+#> Title: What the Package Does (One Line, Title Case)
+#> Version: 0.0.0.9000
+#> Authors@R (parsed):
+#>     * First Last <first.last@example.com> [aut, cre] (YOUR-ORCID-ID)
+#> Description: What the package does (one paragraph).
+#> License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+#>     license
+#> Encoding: UTF-8
+#> Roxygen: list(markdown = TRUE)
+#> RoxygenNote: 7.3.1
+#> ✔ Writing 'NAMESPACE'
+#> ✔ Setting active project to '<no active project>'
+#> ✔ Setting active project to '/tmp/RtmpU0javb/mtcars20'
+#> ✔ Added DataVersion string to 'DESCRIPTION'
+#> ✔ Creating 'data-raw/'
+#> ✔ Creating 'data/'
+#> ✔ Creating 'inst/extdata/'
+#> ✔ Copied subsetCars.Rmd into 'data-raw'
+#> ✔ configured 'datapackager.yml' file
+
+# 3. Run the preprocessing code to build the cars_over_20 data set
+# and reproducibly enclose it in the mtcars20 package.
+# packageName is the full path to the package source directory created at step 2.
+# You'll be prompted for a text description (one line) of the changes you're making.
+# These will be added to the NEWS.md file along with the DataVersion in the package source directory.
+# If the build is run in non-interactive mode, the description will read
+# "Package built in non-interactive mode". You may update it later.
+package_build(packageName = file.path(tempdir(),"mtcars20"))
+#> 
+#> ✔ 1 data set(s) created by subsetCars.Rmd
+#> • cars_over_20
+#> ☘ Built all datasets!
+#> Non-interactive NEWS.md file update.
+#> * Added: cars_over_20
+#> ✔ Creating 'vignettes/'
+#> ✔ Creating 'inst/doc/'
+#> ℹ Loading mtcars20
+#> Writing 'NAMESPACE'
+#> Writing 'mtcars20.Rd'
+#> Writing 'cars_over_20.Rd'
+#> ── R CMD build ─────────────────────────────────────────────────────────────────
+#> * checking for file ‘/tmp/RtmpU0javb/mtcars20/DESCRIPTION’ ... OK
+#> * preparing ‘mtcars20’:
+#> * checking DESCRIPTION meta-information ... OK
+#> * checking for LF line-endings in source and make files and shell scripts
+#> * checking for empty or unneeded directories
+#> * looking to see if a ‘data/datalist’ file should be added
+#> * building ‘mtcars20_1.0.tar.gz’
+#> 
+#> Next Steps 
+#> 1. Update your package documentation. 
+#>    - Edit the documentation.R file in the package source data-raw subdirectory and update the roxygen markup. 
+#>    - Rebuild the package documentation with  document() . 
+#> 2. Add your package to source control. 
+#>    - Call  git init .  in the package source root directory. 
+#>    -  git add  the package files. 
+#>    -  git commit  your new package. 
+#>    - Set up a github repository for your pacakge. 
+#>    - Add the github repository as a remote of your local package repository. 
+#>    -  git push  your local repository to gitub.
+#> [1] "/tmp/RtmpU0javb/mtcars20_1.0.tar.gz"
+
+# Update the autogenerated roxygen documentation in data-raw/documentation.R.
+# edit(file.path(tempdir(),"mtcars20","R","mtcars20.R"))
+
+# 4. Rebuild the documentation.
+document(file.path(tempdir(),"mtcars20"))
+#> ℹ Loading mtcars20
+#> [1] TRUE
+
+# Let's use the package we just created.
+# During actual use, the temporary library does not need to be specified.
+temp_lib <- file.path(tempdir(),"lib")
+dir.create(temp_lib)
+install.packages(file.path(tempdir(),"mtcars20_1.0.tar.gz"),
+                 type = "source", repos = NULL, lib = temp_lib)
+library(mtcars20, lib.loc = temp_lib)
+data("cars_over_20") # load the data
+
+# We have our dataset!
+# Since we preprocessed it,
+# it is clean and under the 5 MB limit for data in packages.
+cars_over_20
+#>    speed dist
+#> 44    22   66
+#> 45    23   54
+#> 46    24   70
+#> 47    24   92
+#> 48    24   93
+#> 49    24  120
+#> 50    25   85
+
+?cars_over_20 # See the documentation you wrote in data-raw/documentation.R.
+
+# We can easily check the version of the data
+data_version("mtcars20")
+#> [1] '0.1.0'
+
+# You can use an assert to check the data version in  reports and
+# analyses that use the packaged data.
+assert_data_version(data_package_name = "mtcars20",
+                    version_string = "0.1.0",
+                    acceptable = "equal")
+```
+
+### Reading external data from within R / Rmd processing scripts.
+
+When creating a data package, your processing scripts will need to read
+your raw data sets in order to process them. These data sets can be
+stored in `inst/extdata` of the data package source tree, or elsewhere
+outside the package source tree. In order to have portable and
+reproducible code, you should not use absolute paths to the raw data.
+Instead, `DataPackageR` provides several APIs to access the data package
+project root directory, the `inst/extdata` subdirectory, and the `data`
+subdirectory.
+
+``` r
+# This returns the datapackage source
+# root directory.
+# In an R or Rmd processing script this can be used to build a path to a directory that is exteral to the package, for
+# example if we are dealing with very large data sets where data cannot be packaged.
+DataPackageR::project_path()
+
+# This returns the
+# inst/extdata directory.
+# Raw data sets that are included in the package should be placed there.
+# They can be read from that location, which is returned by:
+DataPackageR::project_extdata_path()
+
+# This returns the path to the datapackage
+# data directory. This can be used to access
+# stored data objects already created and saved in `data` from
+# other processing scripts.
+DataPackageR::project_data_path()
+```
+
+## Vignettes
+
+[yaml configuration
+guide](https://docs.ropensci.org/DataPackageR/articles/YAML_Configuration_Details.html)
+
+[a more detailed technical
+vignette](https://docs.ropensci.org/DataPackageR/articles/Using_DataPackageR.html)
+
+## Preprint and publication <a id = "publication"></a>
+
+The publication describing the package, (Finak *et al.*,
+2018)<!--@10.12688/gatesopenres.12832.2-->, is now available at [Gates
+Open Research](https://gatesopenresearch.org/articles/2-31/v2) .
+
+The preprint is on [bioRxiv](https://doi.org/10.1101/342907).
+
 ## Similar work
+
+DataPackageR is for processing raw data into tidy data sets and bundling
+them into R packages. (Note:
+[datapack](https://github.com/ropensci/datapack) is a **different
+package** that is used to “create, send and load data from common
+repositories such as DataONE into the R environment”.)
 
 There are a number of tools out there that address similar and
 complementary problems:
@@ -169,7 +374,7 @@ complementary problems:
 
 - **rrrpkg** [github repo](https://github.com/ropensci/rrrpkg)
 
-  A document from ropensci describing using an R package as a research
+  A document from rOpenSci describing using an R package as a research
   compendium. Based on ideas originally introduced by Robert Gentleman
   and Duncan Temple Lang (Gentleman and Lang
   (2004)<!--@Gentleman2004-oj-->)
@@ -179,218 +384,6 @@ complementary problems:
   An R package template for data packages.
 
 See the [publication](#publication) for further discussion.
-
-## Installation
-
-You can install the latest
-[CRAN](https://cran.r-project.org/package=DataPackageR) release of
-DataPackageR with:
-
-``` r
-install.packages("DataPackageR")
-```
-
-You can install the latest version of DataPackageR from
-[GitHub](https://github.com/ropensci/DataPackageR) with:
-
-``` r
-library(remotes)
-remotes::install_github("ropensci/DataPackageR")
-```
-
-## Blog Post - building packages interactively.
-
-See this [rOpenSci blog
-post](https://ropensci.org/blog/2018/09/18/datapackager/) on how to
-build data packages interactively using DataPackageR. This uses several
-new interfaces: `use_data_object()`, `use_processing_script()` and
-`use_raw_dataset()` to build up a data package, rather than assuming the
-user has all the code and data ready to go for `datapackage_skeleton()`.
-
-## Example (assuming all code and data are available)
-
-``` r
-library(DataPackageR)
-
-# Let's reproducibly package up
-# the cars in the mtcars dataset
-# with speed > 20.
-# Our dataset will be called cars_over_20.
-# There are three steps:
-
-# 1. Get the code file that turns the raw data
-# into our packaged and processed analysis-ready dataset.
-# This is in a file called subsetCars.Rmd located in exdata/tests of the DataPackageR package.
-# For your own projects you would write your own Rmd processing file.
-processing_code <- system.file(
-  "extdata", "tests", "subsetCars.Rmd", package = "DataPackageR"
-)
-
-# 2. Create the package framework.
-# We pass in the Rmd file in the `processing_code` variable and the names of the data objects it creates (called "cars_over_20")
-# The new package is called "mtcars20"
-datapackage_skeleton(
-  "mtcars20", force = TRUE, 
-  code_files = processing_code, 
-  r_object_names = "cars_over_20", 
-  path = tempdir()) 
-#> ✔ Creating 'C:/Users/dslager/AppData/Local/Temp/RtmpSCRvVa/mtcars20/'
-#> ✔ Setting active project to 'C:/Users/dslager/AppData/Local/Temp/RtmpSCRvVa/mtcars20'
-#> ✔ Creating 'R/'
-#> ✔ Writing 'DESCRIPTION'
-#> Package: mtcars20
-#> Title: What the Package Does (One Line, Title Case)
-#> Version: 0.0.0.9000
-#> Authors@R (parsed):
-#>     * First Last <first.last@example.com> [aut, cre] (YOUR-ORCID-ID)
-#> Description: What the package does (one paragraph).
-#> License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-#>     license
-#> Encoding: UTF-8
-#> Roxygen: list(markdown = TRUE)
-#> RoxygenNote: 7.3.1
-#> ✔ Writing 'NAMESPACE'
-#> ✔ Setting active project to '<no active project>'
-#> ✔ Setting active project to 'C:/Users/dslager/AppData/Local/Temp/RtmpSCRvVa/mtcars20'
-#> ✔ Added DataVersion string to 'DESCRIPTION'
-#> ✔ Creating 'data-raw/'
-#> ✔ Creating 'data/'
-#> ✔ Creating 'inst/extdata/'
-#> ✔ Copied subsetCars.Rmd into 'data-raw'
-#> ✔ configured 'datapackager.yml' file
-
-# 3. Run the preprocessing code to build the cars_over_20 data set 
-# and reproducibly enclose it in the mtcars20 package.
-# packageName is the full path to the package source directory created at step 2.
-# You'll be prompted for a text description (one line) of the changes you're making.
-# These will be added to the NEWS.md file along with the DataVersion in the package source directory.
-# If the build is run in non-interactive mode, the description will read
-# "Package built in non-interactive mode". You may update it later.
-dir.create(file.path(tempdir(),"lib"))
-package_build(packageName = file.path(tempdir(),"mtcars20"), install = FALSE,
-              lib = file.path(tempdir(),"lib"))
-#> 
-#> ✔ 1 data set(s) created by subsetCars.Rmd
-#> • cars_over_20
-#> ☘ Built  all datasets!
-#> Non-interactive NEWS.md file update.
-#> ✔ Creating 'vignettes/'
-#> ✔ Creating 'inst/doc/'
-#> ℹ Loading mtcars20
-#> Writing 'NAMESPACE'
-#> Writing 'mtcars20.Rd'
-#> Writing 'cars_over_20.Rd'
-#> ── R CMD build ─────────────────────────────────────────────────────────────────
-#>          checking for file 'C:\Users\dslager\AppData\Local\Temp\RtmpSCRvVa\mtcars20/DESCRIPTION' ...  ✔  checking for file 'C:\Users\dslager\AppData\Local\Temp\RtmpSCRvVa\mtcars20/DESCRIPTION'
-#>       ─  preparing 'mtcars20':
-#>    checking DESCRIPTION meta-information ...     checking DESCRIPTION meta-information ...   ✔  checking DESCRIPTION meta-information
-#>       ─  checking for LF line-endings in source and make files and shell scripts
-#>       ─  checking for empty or unneeded directories
-#>       ─  looking to see if a 'data/datalist' file should be added
-#>   ─  building 'mtcars20_1.0.tar.gz'
-#>      
-#> Next Steps 
-#> 1. Update your package documentation. 
-#>    - Edit the documentation.R file in the package source data-raw subdirectory and update the roxygen markup. 
-#>    - Rebuild the package documentation with  document() . 
-#> 2. Add your package to source control. 
-#>    - Call  git init .  in the package source root directory. 
-#>    -  git add  the package files. 
-#>    -  git commit  your new package. 
-#>    - Set up a github repository for your pacakge. 
-#>    - Add the github repository as a remote of your local package repository. 
-#>    -  git push  your local repository to gitub.
-#> [1] "C:/Users/dslager/AppData/Local/Temp/RtmpSCRvVa/mtcars20_1.0.tar.gz"
-
-# Update the autogenerated roxygen documentation in data-raw/documentation.R. 
-# edit(file.path(tempdir(),"mtcars20","R","mtcars20.R"))
-
-# 4. Rebuild the documentation.
-document(file.path(tempdir(),"mtcars20"), install = FALSE,
-         lib = file.path(tempdir(),"lib"))
-#> ℹ Updating mtcars20 documentation
-#> ℹ Loading mtcars20
-#> [1] TRUE
-
-# Let's use the package we just created.
-install.packages(file.path(tempdir(),"mtcars20_1.0.tar.gz"), type = "source", repos = NULL)
-#> Installing package into 'C:/Users/dslager/AppData/Local/Temp/Rtmpk5QUs0/temp_libpath1af01866231b'
-#> (as 'lib' is unspecified)
-library(mtcars20)
-data("cars_over_20") # load the data
-cars_over_20  # Now we can use it.
-#>    speed dist
-#> 44    22   66
-#> 45    23   54
-#> 46    24   70
-#> 47    24   92
-#> 48    24   93
-#> 49    24  120
-#> 50    25   85
-?cars_over_20 # See the documentation you wrote in data-raw/documentation.R.
-
-# We have our dataset!
-# Since we preprocessed it,
-# it is clean and under the 5 MB limit for data in packages.
-cars_over_20
-#>    speed dist
-#> 44    22   66
-#> 45    23   54
-#> 46    24   70
-#> 47    24   92
-#> 48    24   93
-#> 49    24  120
-#> 50    25   85
-
-# We can easily check the version of the data
-data_version("mtcars20")
-#> [1] '0.1.0'
-
-# You can use an assert to check the data version in  reports and
-# analyses that use the packaged data.
-assert_data_version(data_package_name = "mtcars20",
-                    version_string = "0.1.0",
-                    acceptable = "equal")
-```
-
-### Reading external data from within R / Rmd processing scripts.
-
-When creating a data package, your processing scripts will need to read
-your raw data sets in order to process them. These data sets can be
-stored in `inst/extdata` of the data package source tree, or elsewhere
-outside the package source tree. In order to have portable and
-reproducible code, you should not use absolute paths to the raw data.
-Instead, `DataPackageR` provides several APIs to access the data package
-project root directory, the `inst/extdata` subdirectory, and the `data`
-subdirectory.
-
-``` r
-# This returns the datapackage source 
-# root directory. 
-# In an R or Rmd processing script this can be used to build a path to a directory that is exteral to the package, for 
-# example if we are dealing with very large data sets where data cannot be packaged.
-DataPackageR::project_path()
-
-# This returns the   
-# inst/extdata directory. 
-# Raw data sets that are included in the package should be placed there.
-# They can be read from that location, which is returned by: 
-DataPackageR::project_extdata_path()
-
-# This returns the path to the datapackage  
-# data directory. This can be used to access 
-# stored data objects already created and saved in `data` from 
-# other processing scripts.
-DataPackageR::project_data_path()
-```
-
-## Preprint and publication. <a id = "publication"></a>
-
-The publication describing the package, (Finak *et* *al.,*
-2018)<!--@10.12688/gatesopenres.12832.2-->, is now available at [Gates
-Open Research](https://gatesopenresearch.org/articles/2-31/v2) .
-
-The preprint is on [biorxiv](https://doi.org/10.1101/342907).
 
 ## Code of conduct
 
@@ -406,7 +399,7 @@ By participating in this project you agree to abide by its terms.
 
 2.  Finak G, Mayer B, Fulp W, et al. DataPackageR: Reproducible data
     preprocessing, standardization and sharing using R/Bioconductor for
-    collaborative data analysis. Gates Open Res 2018, 2:31 (doi:
+    collaborative data analysis. Gates Open Res 2018, 2:31 (DOI:
     10.12688/gatesopenres.12832.1)
 
 [![ropensci_footer](https://ropensci.org/public_images/ropensci_footer.png)](https://ropensci.org)

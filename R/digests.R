@@ -2,65 +2,55 @@
   write.dcf(data_digest, file.path(path, "DATADIGEST"))
 }
 
-.check_dataversion_string <- function(old_data_digest, new_data_digest) {
-  oldwarn <- options("warn")$warn
-  suppressWarnings({
-    oldv <- strsplit(old_data_digest[["DataVersion"]], "\\.")
-    newv <- strsplit(new_data_digest[["DataVersion"]], "\\.")
-    oldv <- lapply(oldv, as.numeric)[[1]]
-    newv <- lapply(newv, as.numeric)[[1]]
-  })
-  if (any(is.na(oldv)) | any(is.na(newv))) {
-    .multilog_fatal(paste0(
-      "Invalid DataVersion string found ",
-      old_data_digest[["DataVersion"]],
-      " and ", new_data_digest[["DataVersion"]]
-    ))
-  }
-  greater <- apply(t(cbind(oldv, newv)), 2, function(x) x[2] > x[1])
-  equal <- apply(t(cbind(oldv, newv)), 2, function(x) x[2] == x[1])
-  list(
-    isgreater = ((greater[1]) | (equal[1] & greater[2]) |
-      (equal[1] & equal[2] &
-        greater[3])),
-    isequal = all(equal),
-    isless = !((greater[1]) | (equal[1] & greater[2]) |
-      (equal[1] & equal[2] & greater[3])) & !all(equal)
-  )
+#' Check dataversion string
+#'
+#' @param new_data_digest New data digest list with element named "DataVersion"
+#'   containing a valid DataVersion
+#' @param old_data_digest Old data digest list with element named "DataVersion"
+#'   containing a valid DataVersion
+#' @returns Character, ("lower", "equal", or "higher"), where new DataVersion is
+#'   ____ relative to old DataVersion. version
+#' @noRd
+.check_dataversion_string <- function(new_data_digest, old_data_digest) {
+  new <- validate_DataVersion(new_data_digest[["DataVersion"]])
+  old <- validate_DataVersion(old_data_digest[["DataVersion"]])
+  comp <- utils::compareVersion(new, old)
+  txt <- c(lower = -1L, equal = 0L, higher = 1L)
+  names(txt[which(txt == comp)])
 }
 
 .compare_digests <- function(old_digest, new_digest) {
-  # Returns FALSE when any exisiting data has is changed, new data is added, or data is removed, else return TRUE.
-  # Use .mutlilog_warn when there is a change and multilog_debug when new data is added.
+  # Returns FALSE when any existing data has is changed, new data is added, or
+  # data is removed, else return TRUE. Use .multilog_trace for all changes since
+  # this is standard behavior during package re-build, and changes are already
+  # output to the console by .qualify_changes()
 
-  existed <- names(new_digest)[names(new_digest) %in% names(old_digest)]
-  added <- setdiff(names(new_digest), existed)
-  removed <- names(old_digest)[!names(old_digest) %in% names(new_digest)]
-  existed <- existed[existed != "DataVersion"]
-
-  if(length(existed) > 0){
-    changed <- names(new_digest)[ unlist(new_digest[existed]) != unlist(old_digest[existed]) ]
-    if(length(changed) > 0){
-      for(name in changed){
-        .multilog_warn(paste(name, "has changed."))
-      }
-      warning()
-      return(FALSE)
-    }
+  old_digest[['DataVersion']] <- NULL
+  new_digest[['DataVersion']] <- NULL
+  old_digest <- unlist(old_digest)
+  new_digest <- unlist(new_digest)
+  added <- setdiff(names(new_digest), names(old_digest))
+  removed <- setdiff(names(old_digest), names(new_digest))
+  common <- intersect(names(old_digest), names(new_digest))
+  changed <- common[new_digest[common] != old_digest[common]]
+  out <- TRUE
+  for(name in changed){
+    .multilog_trace(paste(name, "has changed."))
+    out <- FALSE
   }
 
   for(name in removed){
-    .multilog_debug(paste(name, "was removed."))
-    return(FALSE)
+    .multilog_trace(paste(name, "was removed."))
+    out <- FALSE
   }
 
   for(name in added){
-    .multilog_debug(paste(name, "was added."))
-    return(FALSE)
+    .multilog_trace(paste(name, "was added."))
+    out <- FALSE
   }
 
-  return(TRUE)
-};
+  return(out)
+}
 
 .combine_digests <- function(new, old) {
   intersection <- intersect(names(new), names(old))
@@ -81,15 +71,9 @@
   return(digest)
 }
 
-.digest_data_env <- function(object_names, dataenv, pkg_description) {
-  if (is.null(pkg_description[["DataVersion"]])) {
-    .multilog_fatal(paste0(
-      "DESCRIPTION file must have a DataVersion",
-      " line. i.e. DataVersion: 0.2.0"
-    ))
-  }
+.digest_data_env <- function(object_names, dataenv, DataVersion) {
   new_data_digest <- list()
-  new_data_digest[["DataVersion"]] <- pkg_description[["DataVersion"]]
+  new_data_digest[["DataVersion"]] <- validate_DataVersion(DataVersion)
   data_objects <- lapply(object_names, function(obj) {
     digest::digest(dataenv[[obj]])
   })
