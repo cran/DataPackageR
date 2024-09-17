@@ -156,7 +156,7 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
       .bullet(
         .add_newlines_to_vector(
           objects_to_keep[which(objects_to_keep %in% object_names)]),
-        crayon::red("\u2022")
+        cli::col_red("\u2022")
       )
     }
     .bullet(
@@ -171,8 +171,8 @@ DataPackageR <- function(arg = NULL, deps = TRUE) {
       ),
       ifelse(
         sum(object_tally) == length(object_tally),
-        crayon::green("\u2618"),
-        crayon::green("\u2605")
+        cli::col_green("\u2618"),
+        cli::col_green("\u2605")
       )
     )
     if (sum(objects_to_keep %in% object_names) > 0) {
@@ -680,7 +680,8 @@ project_path <- function(file = NULL) {
   if (is.null(file)) {
     return(usethis::proj_get())
   } else {
-    return(normalizePath(file.path(usethis::proj_get(), file), winslash = "/"))
+    return(normalizePath(file.path(usethis::proj_get(), file), winslash = "/",
+                         mustWork = FALSE))
   }
 }
 
@@ -707,7 +708,8 @@ project_extdata_path <- function(file = NULL) {
         usethis::proj_get(),
         "inst", "extdata", file
       ),
-      winslash = "/"
+      winslash = "/",
+      mustWork = FALSE
     ))
   }
 }
@@ -734,7 +736,8 @@ project_data_path <- function(file = NULL) {
         usethis::proj_get(),
         "data", file
       ),
-      winslash = "/"
+      winslash = "/",
+      mustWork = FALSE
     ))
   }
 }
