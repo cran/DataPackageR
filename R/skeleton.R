@@ -56,27 +56,20 @@ datapackage_skeleton <-
       options(usethis.quiet = TRUE)
     }
     if (is.null(name)) {
-      stop("Must supply a package name", call. = FALSE)
+      stop("Must supply a package name")
     }
     # if (length(r_object_names) == 0) {
-    #  stop("You must specify r_object_names", call. = FALSE)
+    #  stop("You must specify r_object_names")
     # }
     # if (length(code_files) == 0) {
-    #  stop("You must specify code_files", call. = FALSE)
+    #  stop("You must specify code_files")
     # }
     if (force) {
       unlink(file.path(path, name), recursive = TRUE, force = TRUE)
     }
     package_path <- usethis::create_package(
       path = file.path(path, name),
-      # fields override for usethis 3.0.0 ORCID placeholder, errors out in R 4.5
-      # https://github.com/r-lib/usethis/issues/2059
-      fields = list(
-        `Authors@R` = paste0(
-          "person(\"First\", \"Last\", email = \"first.last",
-          "@example.com\", role = c(\"aut\", \"cre\"))"
-        )
-      ), rstudio = FALSE, open = FALSE
+      rstudio = FALSE, open = FALSE
     )
     # compatibility between usethis 1.4 and 1.5.
     if(is.character(package_path)){

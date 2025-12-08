@@ -1,3 +1,18 @@
+# DataPackageR 0.16.2
+
+## Significant user-facing changes
+* Remove functionality for logging to a logfile (#163)
+* Remove 'log' argument from package_build() (#163)
+
+## Unchanged
+* User still sees same messages, warnings, and errors on the console
+* Changes to data objects still automatically added to the data package NEWS.md
+* For now, rendered output files still written to inst/extdata/Logfiles
+
+## Maintenance
+* Drop dependency on futile.logger package, which has not been updated since 2016.
+* Revert usethis bug workaround from #162, now fixed upstream (#165)
+
 # DataPackageR 0.16.1
 
 ## Minor user-facing improvements
@@ -140,7 +155,6 @@
 # DataPackageR 0.15.0
 - Prepare for CRAN submission.
 
-
 # DataPackageR 0.14.9
 
 - Moving towards rOpenSci compliance
@@ -150,7 +164,6 @@
 - Improved package test.
 - R scripts processed properly into vignettes.
 - Packages installed and loaded after build to make vignettes and data sets accessible in same R session.
--
 
 # DataPackageR 0.13.6
 

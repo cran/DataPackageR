@@ -16,11 +16,11 @@ yml <- DataPackageR::construct_yml_config(
   )
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  # returns an r object representation of
-#  # the config file.
-#  mtcars20_config <- yml_find(
-#    file.path(tempdir(),"mtcars20")
-#  )
+# # returns an r object representation of
+# # the config file.
+# mtcars20_config <- yml_find(
+#   file.path(tempdir(),"mtcars20")
+# )
 
 ## ----comment="", eval = rmarkdown::pandoc_available()-------------------------
   yml_list_objects(yml)
@@ -71,5 +71,5 @@ yml_oneobj <- yml_remove_objects(
 # cat(as.yaml(yml_oneobj))
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  yml_write(yml_oneobj, path = "path_to_package")
+# yml_write(yml_oneobj, path = "path_to_package")
 
